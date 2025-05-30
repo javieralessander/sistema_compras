@@ -9,6 +9,7 @@ import '../../features/auth/screens/forgot_password.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/profile/services/user_profile_service.dart';
 import '../../shared/widgets/custom_google_maps.dart';
@@ -58,7 +59,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/empleados',
       name: EmployeeScreen.name,
-      builder: (context, state) => EmployeeScreen (),
+      builder: (context, state) => EmployeeScreen(),
+    ),
+    GoRoute(
+      path: '/departamentos',
+      name: DepartmentScreen.name,
+      builder: (context, state) => DepartmentScreen(),
     ),
 
     // La rutas dependiendo de la estructura de la app

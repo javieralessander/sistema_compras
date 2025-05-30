@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_compras/features/modules/department/providers/department_provider.dart';
 
 import 'core/config/app_router.dart';
 import 'core/config/app_theme.dart';
@@ -32,6 +33,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => LoginService()),
         ChangeNotifierProvider(create: (_) => RegisterService()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
+        ChangeNotifierProvider(create: (_) => DepartmentProvider()),
       ],
       child: const MyApp(),
     ),
