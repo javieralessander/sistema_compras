@@ -6,6 +6,7 @@ import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/brand/screens/brand_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/employee/screens/employee_screen.dart';
+import '../../features/modules/request_articles/screens/request_articles_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
@@ -46,9 +47,9 @@ const List<MenuItemData> appMenuItems = [
     routeName: SupplierScreen.name,
   ),
   MenuItemData(
-    title: 'Solicitudes',
+    title: 'Solicitud de Artículos',
     icon: Icons.assignment,
-    routeName: 'requests',
+    routeName: RequestArticlesScreen.name,
   ),
   MenuItemData(
     title: 'Órdenes de Compra',

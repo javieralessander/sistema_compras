@@ -12,6 +12,7 @@ import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
+import '../../features/modules/request_articles/screens/request_articles_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
@@ -90,6 +91,13 @@ final GoRouter appRouter = GoRouter(
       name: ArticleScreen.name,
       builder: (context, state) => ArticleScreen(),
     ),
+     GoRoute(
+      path: '/request-articles',
+      name: RequestArticlesScreen.name,
+      builder: (context, state) => RequestArticlesScreen(),
+    ),
+
+    // RequestArticlesScreen
     // La rutas dependiendo de la estructura de la app
     GoRoute(
       path: '/maps',
