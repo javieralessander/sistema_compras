@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:sistema_compras/features/modules/department/providers/department_provider.dart';
+import 'package:sistema_compras/features/modules/unit/providers/unit_provider.dart';
 
 import 'core/config/app_router.dart';
 import 'core/config/app_theme.dart';
@@ -13,6 +14,7 @@ import 'core/services/preferences.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/auth/services/login_service.dart';
 import 'features/auth/services/services.dart';
+import 'features/modules/brand/providers/brand_provider.dart';
 import 'features/modules/employee/providers/employee_provider.dart';
 
 Future<void> main() async {
@@ -34,6 +36,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => RegisterService()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
         ChangeNotifierProvider(create: (_) => DepartmentProvider()),
+        ChangeNotifierProvider(create: (_) => BrandProvider()),
+        ChangeNotifierProvider(create: (_) => UnitProvider()),
       ],
       child: const MyApp(),
     ),

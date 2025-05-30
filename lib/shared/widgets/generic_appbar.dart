@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sistema_compras/features/home/screens/home_screen.dart';
+import '../../features/modules/brand/screens/brand_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/employee/screens/employee_screen.dart';
+import '../../features/modules/unit/screens/unit_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 
 // 1. Define la clase de datos para los menús
@@ -46,10 +48,11 @@ const List<MenuItemData> appMenuItems = [
     icon: Icons.shopping_cart,
     routeName: 'purchase-orders',
   ),
+  MenuItemData(title: 'Marcas', icon: Icons.label, routeName: BrandScreen.name),
   MenuItemData(
-    title: 'Proveedores',
-    icon: Icons.people,
-    routeName: 'providers',
+    title: 'Unidades de Medida',
+    icon: Icons.straighten,
+    routeName: UnitScreen.name,
   ),
   MenuItemData(
     title: 'Empleados',
