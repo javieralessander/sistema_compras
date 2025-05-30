@@ -91,7 +91,10 @@ class GenericDataTable<T> extends StatelessWidget {
                 const Center(
                   child: Padding(
                     padding: EdgeInsets.all(24.0),
-                    child: CircularProgressIndicator(),
+                    child: LinearProgressIndicator(
+                      color: AppColors.primary,
+                      backgroundColor: AppColors.light,
+                    ),
                   ),
                 )
               else
@@ -101,7 +104,7 @@ class GenericDataTable<T> extends StatelessWidget {
                     constraints: const BoxConstraints(minWidth: 1200),
                     child: DataTable(
                       columnSpacing: 32,
-                      headingRowColor: MaterialStateProperty.all(AppColors.light),
+                      headingRowColor: WidgetStateProperty.all(AppColors.light),
                       headingTextStyle: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: AppColors.dark,

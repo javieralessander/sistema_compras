@@ -17,11 +17,13 @@ class MenuItemData {
   final String title;
   final IconData icon;
   final String routeName;
+  final String path;
 
   const MenuItemData({
     required this.title,
     required this.icon,
     required this.routeName,
+    required this.path,
   });
 }
 
@@ -31,42 +33,55 @@ const List<MenuItemData> appMenuItems = [
     title: 'Portada',
     icon: Icons.dashboard,
     routeName: HomeScreen.name,
+    path: '/home',
   ),
   MenuItemData(
     title: 'Departamentos',
     icon: Icons.apartment,
     routeName: DepartmentScreen.name,
+    path: '/departamentos',
   ),
   MenuItemData(
     title: 'Artículos',
     icon: Icons.inventory,
     routeName: ArticleScreen.name,
+    path: '/articulos',
   ),
   MenuItemData(
     title: 'Proveedores',
     icon: Icons.local_shipping,
     routeName: SupplierScreen.name,
+    path: '/proveedores',
   ),
   MenuItemData(
     title: 'Solicitud de Artículos',
     icon: Icons.assignment,
     routeName: RequestArticlesScreen.name,
+    path: '/solicitud-articulos',
   ),
   MenuItemData(
     title: 'Órdenes de Compra',
     icon: Icons.shopping_cart,
     routeName: PurchaseOrderScreen.name,
+    path: '/ordenes-compra',
   ),
-  MenuItemData(title: 'Marcas', icon: Icons.label, routeName: BrandScreen.name),
+  MenuItemData(
+    title: 'Marcas',
+    icon: Icons.label,
+    routeName: BrandScreen.name,
+    path: '/marcas',
+  ),
   MenuItemData(
     title: 'Unidades de Medida',
     icon: Icons.straighten,
     routeName: UnitScreen.name,
+    path: '/unidades-medida',
   ),
   MenuItemData(
     title: 'Empleados',
     icon: Icons.people_alt,
     routeName: EmployeeScreen.name,
+    path: '/empleados',
   ),
 ];
 
@@ -168,6 +183,7 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
                             title: item.title,
                             icon: item.icon,
                             routeName: item.routeName,
+                            path: item.path,
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -209,6 +225,7 @@ class CustomDrawer extends StatelessWidget {
               title: item.title,
               icon: item.icon,
               routeName: item.routeName,
+              path: item.path,
             ),
         ],
       ),
@@ -216,24 +233,41 @@ class CustomDrawer extends StatelessWidget {
   }
 }
 
+// ...existing code...
 class _DrawerItem extends StatelessWidget {
   final String title;
   final IconData icon;
   final String? routeName;
+  final String path;
 
-  const _DrawerItem({required this.title, required this.icon, this.routeName});
+  const _DrawerItem({
+    required this.title,
+    required this.icon,
+    this.routeName,
+    required this.path,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final String currentPath = GoRouterState.of(context).uri.toString();
+    final bool isSelected = path == currentPath;
+
     return ListTile(
-      leading: Icon(icon, color: Colors.black87),
-      title: Text(title, style: const TextStyle(color: Colors.black87)),
+      leading: Icon(icon, color: isSelected ? Colors.blue : Colors.black87),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.blue : Colors.black87,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      selected: isSelected,
       onTap: () {
         if (routeName == null) return;
         if (Scaffold.of(context).isDrawerOpen) {
           Navigator.pop(context);
         }
-        context.pushNamed(routeName!);
+        context.go(path); // Cambiado a usar path
       },
     );
   }
@@ -243,30 +277,42 @@ class HorizontalMenuItem extends StatelessWidget {
   final String title;
   final IconData icon;
   final String? routeName;
+  final String path;
 
   const HorizontalMenuItem({
     super.key,
     required this.title,
     required this.icon,
     this.routeName,
+    required this.path,
   });
 
   @override
   Widget build(BuildContext context) {
+    final GoRouter router = GoRouter.of(context);
+    final String currentPath = router.routeInformationProvider.value.location;
+
+    final bool isSelected = currentPath == path;
+
     return TextButton.icon(
       onPressed: () {
         if (routeName == null) return;
-        if (Scaffold.of(context).isDrawerOpen) {
-          Navigator.pop(context);
-        }
-        context.pushNamed(routeName!);
+        context.go(path); // Cambiado a usar path
       },
-      icon: Icon(icon, color: Colors.black87),
-      label: Text(title, style: const TextStyle(color: Colors.black87)),
+      icon: Icon(icon, color: isSelected ? Colors.blue : Colors.black87),
+      label: Text(
+        title,
+        style: TextStyle(
+          color: isSelected ? Colors.blue : Colors.black87,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
       style: TextButton.styleFrom(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.transparent,
+        foregroundColor: isSelected ? Colors.blue : Colors.black,
+        backgroundColor:
+            isSelected ? Colors.blue.withOpacity(0.08) : Colors.transparent,
       ),
     );
   }
 }
+// ...existing code...

@@ -73,32 +73,32 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => DepartmentScreen(),
     ),
     GoRoute(
-      path: '/brans',
+      path: '/marcas',
       name: BrandScreen.name,
       builder: (context, state) => BrandScreen(),
     ),
     GoRoute(
-      path: '/units',
+      path: '/unidades-medida',
       name: UnitScreen.name,
       builder: (context, state) => UnitScreen(),
     ),
     GoRoute(
-      path: '/Suppliers',
+      path: '/proveedores',
       name: SupplierScreen.name,
       builder: (context, state) => SupplierScreen(),
     ),
     GoRoute(
-      path: '/articles',
+      path: '/articulos',
       name: ArticleScreen.name,
       builder: (context, state) => ArticleScreen(),
     ),
     GoRoute(
-      path: '/request-articles',
+      path: '/solicitud-articulos',
       name: RequestArticlesScreen.name,
       builder: (context, state) => RequestArticlesScreen(),
     ),
     GoRoute(
-      path: '/purchase-order',
+      path: '/ordenes-compra',
       name: PurchaseOrderScreen.name,
       builder: (context, state) => PurchaseOrderScreen(),
     ),
