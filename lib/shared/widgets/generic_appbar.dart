@@ -5,6 +5,7 @@ import 'package:sistema_compras/features/home/screens/home_screen.dart';
 import '../../features/modules/brand/screens/brand_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/employee/screens/employee_screen.dart';
+import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 
@@ -37,6 +38,11 @@ const List<MenuItemData> appMenuItems = [
     title: 'Artículos',
     icon: Icons.inventory,
     routeName: 'articles',
+  ),
+  MenuItemData(
+    title: 'Proveedores',
+    icon: Icons.local_shipping,
+    routeName: SupplierScreen.name,
   ),
   MenuItemData(
     title: 'Solicitudes',

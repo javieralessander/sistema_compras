@@ -16,6 +16,7 @@ import 'features/auth/services/login_service.dart';
 import 'features/auth/services/services.dart';
 import 'features/modules/brand/providers/brand_provider.dart';
 import 'features/modules/employee/providers/employee_provider.dart';
+import 'features/modules/supplier/providers/supplier_provider.dart';
 
 Future<void> main() async {
   // Evitar el error de "WidgetsBinding not initialized"
@@ -38,6 +39,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => DepartmentProvider()),
         ChangeNotifierProvider(create: (_) => BrandProvider()),
         ChangeNotifierProvider(create: (_) => UnitProvider()),
+        ChangeNotifierProvider(create: (_) => SupplierProvider()),
       ],
       child: const MyApp(),
     ),
