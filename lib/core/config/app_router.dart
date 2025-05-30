@@ -10,6 +10,7 @@ import '../../features/auth/screens/forgot_password.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
@@ -80,9 +81,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => UnitScreen(),
     ),
     GoRoute(
-      path: '/Supplier',
+      path: '/Suppliers',
       name: SupplierScreen.name,
       builder: (context, state) => SupplierScreen(),
+    ),
+    GoRoute(
+      path: '/articles',
+      name: ArticleScreen.name,
+      builder: (context, state) => ArticleScreen(),
     ),
     // La rutas dependiendo de la estructura de la app
     GoRoute(

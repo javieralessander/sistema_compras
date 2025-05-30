@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_compras/features/modules/article/providers/article_provider.dart';
 import 'package:sistema_compras/features/modules/department/providers/department_provider.dart';
 import 'package:sistema_compras/features/modules/unit/providers/unit_provider.dart';
 
@@ -40,6 +41,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => BrandProvider()),
         ChangeNotifierProvider(create: (_) => UnitProvider()),
         ChangeNotifierProvider(create: (_) => SupplierProvider()),
+         ChangeNotifierProvider(create: (_) => ArticleProvider()),
       ],
       child: const MyApp(),
     ),

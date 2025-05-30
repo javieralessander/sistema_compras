@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sistema_compras/features/home/screens/home_screen.dart';
+import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/brand/screens/brand_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/employee/screens/employee_screen.dart';
@@ -37,7 +38,7 @@ const List<MenuItemData> appMenuItems = [
   MenuItemData(
     title: 'Artículos',
     icon: Icons.inventory,
-    routeName: 'articles',
+    routeName: ArticleScreen.name,
   ),
   MenuItemData(
     title: 'Proveedores',
