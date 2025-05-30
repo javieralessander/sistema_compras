@@ -12,6 +12,7 @@ import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
+import '../../features/modules/purchase _order/screens/purchase _order_screen.dart';
 import '../../features/modules/request_articles/screens/request_articles_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
@@ -24,7 +25,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   // initialLocation: '/auth-gate',
-  initialLocation: '/empleados',
+  initialLocation: '/home',
   routes: [
     GoRoute(
       path: '/login',
@@ -91,13 +92,16 @@ final GoRouter appRouter = GoRouter(
       name: ArticleScreen.name,
       builder: (context, state) => ArticleScreen(),
     ),
-     GoRoute(
+    GoRoute(
       path: '/request-articles',
       name: RequestArticlesScreen.name,
       builder: (context, state) => RequestArticlesScreen(),
     ),
-
-    // RequestArticlesScreen
+    GoRoute(
+      path: '/purchase-order',
+      name: PurchaseOrderScreen.name,
+      builder: (context, state) => PurchaseOrderScreen(),
+    ),
     // La rutas dependiendo de la estructura de la app
     GoRoute(
       path: '/maps',

@@ -17,6 +17,7 @@ import 'features/auth/services/login_service.dart';
 import 'features/auth/services/services.dart';
 import 'features/modules/brand/providers/brand_provider.dart';
 import 'features/modules/employee/providers/employee_provider.dart';
+import 'features/modules/purchase _order/providers/purchase _order_provider.dart';
 import 'features/modules/request_articles/providers/request_articles_provider.dart';
 import 'features/modules/supplier/providers/supplier_provider.dart';
 
@@ -44,6 +45,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => SupplierProvider()),
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
         ChangeNotifierProvider(create: (_) => RequestProvider()),
+        ChangeNotifierProvider(create: (_) => PurchaseOrderProvider()),
       ],
       child: const MyApp(),
     ),

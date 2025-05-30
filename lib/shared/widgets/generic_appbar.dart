@@ -6,6 +6,7 @@ import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/brand/screens/brand_screen.dart';
 import '../../features/modules/department/screens/department_screen.dart';
 import '../../features/modules/employee/screens/employee_screen.dart';
+import '../../features/modules/purchase _order/screens/purchase _order_screen.dart';
 import '../../features/modules/request_articles/screens/request_articles_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
@@ -54,7 +55,7 @@ const List<MenuItemData> appMenuItems = [
   MenuItemData(
     title: 'Órdenes de Compra',
     icon: Icons.shopping_cart,
-    routeName: 'purchase-orders',
+    routeName: PurchaseOrderScreen.name,
   ),
   MenuItemData(title: 'Marcas', icon: Icons.label, routeName: BrandScreen.name),
   MenuItemData(
