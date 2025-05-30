@@ -136,7 +136,7 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'JAVIER ALESSANDER MONTERO MONTERO',
+                'JAVIER ALESSANDER MONTERO',
                 textAlign: TextAlign.start,
                 style: TextStyle(
                   color: Colors.black,
