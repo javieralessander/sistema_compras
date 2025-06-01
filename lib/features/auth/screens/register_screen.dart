@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-
 import '../../../core/config/app_theme.dart';
-import '../../../shared/formatters/phone_number_text_input_formatter.dart';
-import '../../../shared/services/map_service.dart';
 import '../../../shared/utils/form_validation.dart';
-import '../../../shared/utils/select_date.dart';
-import '../../../shared/widgets/custom_google_maps.dart';
-import '../../../shared/widgets/custom_modal_bottom_sheet.dart';
-import '../../../shared/widgets/politics_and_privacy.dart';
 import '../services/services.dart';
 import '../widgets/custom_text_form_field.dart';
-import '../widgets/social_sign_in.dart';
 import 'auth_gate.dart';
+import 'login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   static const String name = 'register';
@@ -24,354 +16,178 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sizeScreen = MediaQuery.of(context).size;
-
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text('Regístrate para continuar'),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: sizeScreen.width * 0.1),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                //Iniciar sección con Redes Sociales o Servicios
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: sizeScreen.height * 0.005,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/login_background.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+          ),
+          Center(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32),
                   ),
-                  child: const SocialSignIn(
-                    googleActionText: 'Google',
-                    facebookActionText: 'Facebook',
-                    appleActionText: 'Apple',
+                  color: Colors.white.withOpacity(0.95),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset('assets/svgs/sicom.svg', height: 64),
+                        const SizedBox(height: 32),
+                        const Text(
+                          'Regístrate para continuar',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        _RegisterForm(),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap:
+                                  () => context.pushReplacementNamed(
+                                    LoginScreen.name,
+                                  ),
+                              child: const Text(
+                                "¿Ya tienes cuenta?",
+                                style: TextStyle(color: AppColors.info),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-
-                //Indications
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: sizeScreen.height * 0.015,
-                  ),
-                  child: const Row(
-                    children: [Text('O regístrate con tu correo electrónico')],
-                  ),
-                ),
-
-                //Register form
-                _RegisterForm(),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
+class _RegisterForm extends StatefulWidget {
+  const _RegisterForm();
 
-class _RegisterForm extends StatelessWidget {
-  final _dateController = TextEditingController();
-  final _direccionController = TextEditingController();
+  @override
+  State<_RegisterForm> createState() => _RegisterFormState();
+}
+
+class _RegisterFormState extends State<_RegisterForm> {
+  final formKeyRegister = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var sizeScreen = MediaQuery.of(context).size;
+    final registerService = context.watch<RegisterService>();
     final validationForm = FormValidation();
-
-    _direccionController.text = context.watch<RegisterService>().direction;
-
-    _dateController.text = DateFormat(
-      'd/MM/yyyy',
-    ).format(context.watch<RegisterService>().birthday);
 
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      key: context.watch<RegisterService>().formKeyRegister,
+      key: formKeyRegister,
       child: Column(
         children: [
           CustomTextFormField(
             labelText: 'Nombre',
             keyboardType: TextInputType.name,
-            onChanged:
-                (value) => {
-                  context.read<RegisterService>().user.firstName = value,
-
-                  //
-                  context.read<RegisterService>().user.lastName = value,
-                },
-            validator: FormValidation().nameValidator(
-              context.read<RegisterService>().user.firstName,
-            ),
+            controller: nameController,
+            onChanged: (value) => registerService.user.name = value,
+            validator: validationForm.nameValidator(nameController.text),
           ),
-          SizedBox(height: sizeScreen.height * 0.015),
+          const SizedBox(height: 16),
           CustomTextFormField(
             labelText: 'Correo electrónico',
             keyboardType: TextInputType.emailAddress,
-            onChanged:
-                (value) => context.read<RegisterService>().user.email = value,
-            validator: FormValidation().emailValidator(
-              context.read<RegisterService>().user.email,
-            ),
+            controller: emailController,
+            onChanged: (value) => registerService.user.email = value,
+            validator: FormValidation().emailValidator,
           ),
-          SizedBox(height: sizeScreen.height * 0.015),
+          const SizedBox(height: 16),
           CustomTextFormField(
-            obscureText: context.watch<RegisterService>().obscureText,
+            obscureText: registerService.obscureText,
             labelText: 'Contraseña',
             keyboardType: TextInputType.visiblePassword,
-            onChanged:
-                (value) =>
-                    context.read<RegisterService>().user.password = value,
-            validator: validationForm.passwordValidator(
-              context.read<RegisterService>().user.password,
-            ),
+            controller: passwordController,
+            onChanged: (value) => registerService.user.password = value,
+            validator: validationForm.passwordValidator(passwordController.text),
             suffixIcon: IconButton(
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all<Color>(
-                  Colors.transparent,
-                ),
+              style: IconButton.styleFrom(
+                foregroundColor: AppColors.info,
+                backgroundColor: Colors.transparent,
               ),
               icon: Icon(
-                context.watch<RegisterService>().obscureText
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
+                registerService.obscureText
+                    ? Icons.visibility
+                    : Icons.visibility_off,
               ),
-              onPressed: context.read<RegisterService>().toggleObscureText,
+              onPressed: registerService.toggleObscureText,
             ),
           ),
-          SizedBox(height: sizeScreen.height * 0.015),
-          CustomTextFormField(
-            labelText: 'Teléfono',
-            keyboardType: TextInputType.phone,
-            onChanged:
-                (value) =>
-                    context.read<RegisterService>().user.phoneNumber = value,
-            inputFormatters: [PhoneNumberTextInputFormatter()],
-            validator: FormValidation().phoneNumberValidator(
-              context.read<RegisterService>().user.phoneNumber,
-            ),
-          ),
-          SizedBox(height: sizeScreen.height * 0.015),
-          GestureDetector(
-            onTap: () async {
-              final mapService = Provider.of<MapService>(
-                context,
-                listen: false,
-              );
-
-              if (mapService.ubicacionActiva == false) {
-                final positionUser = await mapService.getCurrentLocation(
-                  context,
-                );
-
-                if (positionUser != null) {
-                  mapService.posicionInicial = CameraPosition(
-                    target: LatLng(
-                      positionUser.latitude,
-                      positionUser.longitude,
-                    ),
-                    zoom: 16.5,
-                  );
-                } else {
-                  mapService.posicionInicial = const CameraPosition(
-                    target: LatLng(18.459362, -69.994747),
-                    zoom: 16.5,
-                  );
-                }
-              }
-
-              // ignore: use_build_context_synchronously
-
-              context.pushNamed(CustomGoogleMaps.name);
-            },
-            child: CustomTextFormField(
-              enabled: false,
-              controller: _direccionController,
-              labelText: 'Dirección de entrega',
-              hintText: _direccionController.text,
-              keyboardType: TextInputType.streetAddress,
-              onChanged: (value) {
-                _direccionController.text = value;
-              },
-              suffixIcon: IconButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(
-                    Colors.transparent,
-                  ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32),
                 ),
-                icon: const Icon(Icons.location_on_outlined),
-                onPressed: () => context.pushNamed(CustomGoogleMaps.name),
+                backgroundColor: AppColors.info,
+              ),
+              onPressed: context.select<RegisterService, bool>(
+                        (registerService) => registerService.isLoading,
+                      )
+                      ? null
+                      : () async {
+                          final registerService = context.read<RegisterService>();
+                          final form = formKeyRegister.currentState;
+                          if (form != null && form.validate()) {
+                            final success = await registerService
+                                .createUserWithEmailAndPassword(
+                                  emailController.text,
+                                  passwordController.text,
+                                );
+                            if (success && context.mounted) {
+                              context.pushReplacementNamed(AuthGate.name);
+                            }
+                          }
+                        },
+              child: Text(
+                context.watch<RegisterService>().isLoading
+                    ? 'Espere...'
+                    : 'Crear cuenta',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-          SizedBox(height: sizeScreen.height * 0.015),
-          GestureDetector(
-            onTap: () async {
-              FocusScope.of(context).requestFocus(FocusNode());
-
-              final DateTime? fechaSeleccionada = await SelectDate()
-                  .selectDate(context, context.read<RegisterService>().birthday)
-                  .then((value) => value);
-
-              if (fechaSeleccionada != null) {
-                context.read<RegisterService>().birthday = fechaSeleccionada;
-                _dateController.text = DateFormat(
-                  'd/MM/yyyy',
-                ).format(fechaSeleccionada);
-              } else {
-                return;
-              }
-            },
-            child: CustomTextFormField(
-              enabled: false,
-              controller: _dateController,
-              hintText: _dateController.text,
-              labelText: 'Fecha de Nacimiento',
-              keyboardType: TextInputType.datetime,
-              onChanged: (value) {
-                _dateController.text = value;
-              },
-              suffixIcon: const Icon(
-                Icons.calendar_month_outlined,
-                color: AppColors.white,
-              ),
-            ),
-          ),
-          SizedBox(height: sizeScreen.height * 0.01),
-
-          // Políticas de privacidad
-          CheckboxListTile(
-            value: context.watch<RegisterService>().policiesAndTerms,
-            controlAffinity: ListTileControlAffinity.leading,
-            activeColor: AppColors.primary,
-            title: RichText(
-              text: TextSpan(
-                style: TextStyle(letterSpacing: 0.3),
-                children: <InlineSpan>[
-                  const TextSpan(text: 'Acepta los '),
-                  WidgetSpan(
-                    child: GestureDetector(
-                      onTap: () async {
-                        // var url = Uri.parse(
-                        //     'https://jeelystore.com/politica-privacidad');
-                        // if (await canLaunchUrl(url)) {
-                        //   await launchUrl(url);
-                        // } else {
-                        //   throw 'Could not launch $url';
-                        // }
-
-                        showCustomModalBottomSheet(
-                          context,
-                          'Términos y políticas',
-                          const PoliticsAndPrivacy(),
-                        );
-                      },
-                      child: RichText(
-                        text: const TextSpan(
-                          text: 'Términos y Condiciones',
-                          style: TextStyle(
-                            color: AppColors.info,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const TextSpan(text: ' y de la '),
-                  WidgetSpan(
-                    child: GestureDetector(
-                      onTap: () async {
-                        // var url = Uri.parse(
-                        //     'https://jeelystore.com/politica-privacidad');
-                        // if (await canLaunchUrl(url)) {
-                        //   await launchUrl(url);
-                        // } else {
-                        //   throw 'Could not launch $url';
-                        // }
-
-                        showCustomModalBottomSheet(
-                          context,
-                          'Términos y políticas',
-                          const PoliticsAndPrivacy(),
-                        );
-                      },
-                      child: RichText(
-                        text: const TextSpan(
-                          text: 'Política de Privacidad',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: AppColors.info,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onChanged: (bool? value) {
-              context.read<RegisterService>().policiesAndTerms = value!;
-            },
-          ),
-          SizedBox(height: sizeScreen.height * 0.01),
-          FilledButton(
-            onPressed:
-                context.select<RegisterService, bool>(
-                      (loginService) => loginService.isLoading,
-                    )
-                    ? null
-                    : context.watch<RegisterService>().policiesAndTerms
-                    ? () async {
-                      // try {
-                      //   final response = await context
-                      //       .read<RegisterService>()
-                      //       .createUserWithEmailAndPassword(
-                      //           context.read<RegisterService>().user.email!,
-                      //           context
-                      //               .read<RegisterService>()
-                      //               .user
-                      //               .password!);
-
-                      //   if (response != null) {
-                      //     Future.delayed(const Duration(seconds: 1))
-                      //         .then((_) {
-                      //       if (Navigator.canPop(context)) {
-                      //         context.pushReplacementNamed(AuthGate.name);
-                      //       }
-                      //     });
-                      //   }
-                      // } catch (e) {
-                      //   Future.delayed(const Duration(seconds: 1))
-                      //       .then((_) {
-                      //     ScaffoldMessenger.of(context).showSnackBar(
-                      //       SnackBar(content: Text(e.toString())),
-                      //     );
-                      //   });
-                      // }
-                    }
-                    : () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Debes aceptar los términos y condiciones',
-                          ),
-                        ),
-                      );
-                    },
-            child: Text(
-              context.watch<RegisterService>().isLoading
-                  ? 'Espere...'
-                  : 'Crear cuenta',
-            ),
-          ),
-          SizedBox(height: sizeScreen.height * 0.05),
         ],
       ),
     );
