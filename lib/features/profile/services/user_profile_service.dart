@@ -36,21 +36,16 @@ class UserProfileService extends ChangeNotifier {
       );
 
       final result = response['body']['result'];
-      if (result == null || result.isEmpty) throw Exception("Usuario no encontrado");
+      if (result == null || result.isEmpty) {
+        throw Exception("Usuario no encontrado");
+      }
       final rawUser = result.first;
       if (rawUser == null) throw Exception("Usuario no encontrado");
-      
 
       user = User(
         id: rawUser['id'].toString(),
-        completeName: rawUser['name'],
-        username: rawUser['login'],
+        name: rawUser['name'],
         email: rawUser['email'],
-        phoneNumber: rawUser['phone'],
-        nationality:
-            rawUser['country_of_birth'] is List
-                ? rawUser['country_of_birth'][1]
-                : rawUser['country_of_birth'],
       );
 
       Preferences.user = user!;

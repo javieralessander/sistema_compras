@@ -257,10 +257,10 @@ class UserProfileScreen extends StatelessWidget {
             Random().nextInt(256),
           ),
           child: Text(
-            (Preferences.user.completeName ?? Preferences.user.email)
+            (Preferences.user.name ?? Preferences.user.email)
                         ?.isNotEmpty ==
                     true
-                ? (Preferences.user.completeName ?? Preferences.user.email)![0]
+                ? (Preferences.user.name ?? Preferences.user.email)![0]
                     .toUpperCase()
                 : 'N',
             style: const TextStyle(color: Colors.white, fontSize: 40.0),
@@ -281,8 +281,8 @@ class UserProfileScreen extends StatelessWidget {
           SizedBox(height: sizeScreen.height * 0.04),
           Text(
             textAlign: TextAlign.center,
-            Preferences.user.completeName != null
-                ? capitalize(Preferences.user.completeName!.toLowerCase())
+            Preferences.user.name != null
+                ? capitalize(Preferences.user.name!.toLowerCase())
                 : 'Nombre no registrado',
           ),
           Padding(
@@ -292,12 +292,7 @@ class UserProfileScreen extends StatelessWidget {
               Preferences.user.email ?? 'Email no registrado',
             ),
           ),
-          Text(
-            textAlign: TextAlign.center,
-            Preferences.user.phoneNumber != null
-                ? formatPhoneNumber(Preferences.user.phoneNumber)
-                : 'Teléfono no registrado',
-          ),
+        
           SizedBox(height: sizeScreen.height * 0.02),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
