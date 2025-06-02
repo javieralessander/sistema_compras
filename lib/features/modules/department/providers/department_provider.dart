@@ -3,6 +3,9 @@ import '../models/department_model.dart';
 import '../services/department_service.dart';
 
 class DepartmentProvider extends ChangeNotifier {
+  DepartmentProvider() {
+    cargarDepartamentos();
+  }
   List<Department> _todos = [];
   List<Department> _pagina = [];
 
@@ -94,6 +97,19 @@ class DepartmentProvider extends ChangeNotifier {
       _actualizarPagina();
     } catch (e) {
       debugPrint('Error al agregar departamento: $e');
+    }
+  }
+
+  Future<void> actualizarDepartamento(Department departamento) async {
+    try {
+      final actualizado = await DepartmentService.update(departamento);
+      final index = _todos.indexWhere((d) => d.id == departamento.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar departamento: $e');
     }
   }
 

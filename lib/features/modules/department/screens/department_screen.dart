@@ -50,6 +50,11 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
             builder: (_) => GenericFormDialog<Department>(
               title: 'Agregar Departamento',
               onSubmit: (data) async => provider.agregarDepartamento(data),
+              fromValues: (values, initial) => Department(
+                id: initial?.id ?? 0,
+                nombre: values['nombre'] ?? initial?.nombre ?? '',
+                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+              ),
               fields: [
                 FormFieldDefinition<Department>(
                   key: 'nombre',
@@ -60,6 +65,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                     nombre: v,
                     estado: d?.estado ?? 'Activo',
                   ),
+                  validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
                 ),
                 FormFieldDefinition<Department>(
                   key: 'estado',
@@ -148,14 +154,64 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           Icons.more_vert,
                           color: Color(0xFF10B981),
                         ),
-                        onSelected: (value) {
-                          if (value == 'delete') {
-                            context.read<DepartmentProvider>().eliminarDepartamento(
-                              d.id,
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            await showDialog(
+                              context: context,
+                              builder: (_) => GenericFormDialog<Department>(
+                                title: 'Editar Departamento',
+                                initialData: d,
+                                onSubmit: (data) async {
+                                  await context
+                                      .read<DepartmentProvider>()
+                                      .actualizarDepartamento(data);
+                                },
+                                fromValues: (values, initial) => Department(
+                                  id: initial?.id ?? 0,
+                                  nombre: values['nombre'] ?? initial?.nombre ?? '',
+                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                                ),
+                                fields: [
+                                  FormFieldDefinition<Department>(
+                                    key: 'nombre',
+                                    label: 'Nombre',
+                                    getValue: (dep) => dep?.nombre ?? '',
+                                    applyValue: (dep, v) => Department(
+                                      id: dep?.id ?? 0,
+                                      nombre: v,
+                                      estado: dep?.estado ?? 'Activo',
+                                    ),
+                                    validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
+                                  ),
+                                  FormFieldDefinition<Department>(
+                                    key: 'estado',
+                                    label: 'Estado',
+                                    fieldType: 'dropdown',
+                                    options: ['Activo', 'Inactivo'],
+                                    getValue: (dep) => dep?.estado ?? 'Activo',
+                                    applyValue: (dep, v) => Department(
+                                      id: dep?.id ?? 0,
+                                      nombre: dep?.nombre ?? '',
+                                      estado: v,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
+                          } else if (value == 'delete') {
+                            context
+                                .read<DepartmentProvider>()
+                                .eliminarDepartamento(d.id);
                           }
                         },
                         itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: Icon(Icons.edit, color: Colors.blue),
+                              title: Text('Editar'),
+                            ),
+                          ),
                           const PopupMenuItem(
                             value: 'delete',
                             child: ListTile(
