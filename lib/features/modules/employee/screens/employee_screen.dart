@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sistema_compras/features/modules/department/providers/department_provider.dart';
 import '../../../../core/config/app_theme.dart';
 import '../../../../shared/widgets/generic_appbar.dart';
 import '../../../../shared/widgets/generic_data_table.dart';
 import '../../../../shared/widgets/generic_form_dialog.dart';
+import '../../department/models/department_model.dart';
 import '../models/employee_model.dart';
 import '../providers/employee_provider.dart';
 
@@ -28,6 +30,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<EmployeeProvider>();
+    final departments = context.watch<DepartmentProvider>().departamentos;
     final sizeScreen = MediaQuery.of(context).size;
     final isMobile = sizeScreen.width < 800;
 
@@ -53,6 +56,26 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     (_) => GenericFormDialog<Employee>(
                       title: 'Agregar Empleado',
                       onSubmit: (data) async => provider.agregarEmpleado(data),
+                      fromValues: (values, initial) {
+                        final matchedDepartment = departments.firstWhere(
+                          (d) =>
+                              d.id ==
+                              (values['departamento']?.id ??
+                                  initial?.departamento?.id),
+                          orElse:
+                              () =>
+                                  values['departamento'] ??
+                                  initial?.departamento,
+                        );
+                        return Employee(
+                          id: initial?.id ?? 0,
+                          cedula: values['cedula'] ?? initial?.cedula ?? '',
+                          nombre: values['nombre'] ?? initial?.nombre ?? '',
+                          departamento: matchedDepartment,
+                          estado:
+                              values['estado'] ?? initial?.estado ?? 'Activo',
+                        );
+                      },
                       fields: [
                         FormFieldDefinition<Employee>(
                           key: 'cedula',
@@ -62,10 +85,15 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                               (e, v) => Employee(
                                 id: e?.id ?? 0,
                                 cedula: v,
-                                nombre: e?.nombre ?? '',
-                                departamento: e?.departamento ?? '',
-                                estado: e?.estado ?? 'Activo',
+                                nombre: e!.nombre,
+                                departamento: e.departamento,
+                                estado: e.estado,
                               ),
+                          validator:
+                              (v) =>
+                                  (v == null || v.isEmpty)
+                                      ? 'Campo requerido'
+                                      : null,
                         ),
                         FormFieldDefinition<Employee>(
                           key: 'nombre',
@@ -76,22 +104,32 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 id: e?.id ?? 0,
                                 cedula: e?.cedula ?? '',
                                 nombre: v,
-                                departamento: e?.departamento ?? '',
-                                estado: e?.estado ?? 'Activo',
+                                departamento: e!.departamento,
+                                estado: e.estado,
                               ),
+                          validator:
+                              (v) =>
+                                  (v == null || v.isEmpty)
+                                      ? 'Campo requerido'
+                                      : null,
                         ),
                         FormFieldDefinition<Employee>(
                           key: 'departamento',
                           label: 'Departamento',
-                          getValue: (e) => e?.departamento ?? '',
+                          fieldType: 'dropdown',
+                          options: departments,
+                          getValue: (e) => e?.departamento,
                           applyValue:
                               (e, v) => Employee(
                                 id: e?.id ?? 0,
                                 cedula: e?.cedula ?? '',
                                 nombre: e?.nombre ?? '',
-                                departamento: v,
+                                departamento: v as Department,
                                 estado: e?.estado ?? 'Activo',
                               ),
+                          validator:
+                              (v) => v == null ? 'Campo requerido' : null,
+                          display: (d) => (d as Department).nombre,
                         ),
                         FormFieldDefinition<Employee>(
                           key: 'estado',
@@ -104,7 +142,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 id: e?.id ?? 0,
                                 cedula: e?.cedula ?? '',
                                 nombre: e?.nombre ?? '',
-                                departamento: e?.departamento ?? '',
+                                departamento: e!.departamento,
                                 estado: v,
                               ),
                         ),
@@ -162,7 +200,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                     DataCell(Text(e.id.toString())),
                     DataCell(Text(e.cedula)),
                     DataCell(Text(e.nombre)),
-                    DataCell(Text(e.departamento)),
+                    DataCell(Text(e.departamento.nombre)),
                     DataCell(
                       Chip(
                         shape: StadiumBorder(
@@ -200,8 +238,125 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           Icons.more_vert,
                           color: Color(0xFF10B981),
                         ),
-                        onSelected: (value) {
-                          if (value == 'delete') {
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            await showDialog(
+                              context: context,
+                              builder:
+                                  (_) => GenericFormDialog<Employee>(
+                                    title: 'Editar Empleado',
+                                    initialData: e,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<EmployeeProvider>()
+                                          .actualizarEmpleado(data);
+                                    },
+                                    fromValues: (values, initial) {
+                                      final matchedDepartment = departments
+                                          .firstWhere(
+                                            (d) =>
+                                                d.id ==
+                                                (values['departamento']?.id ??
+                                                    initial?.departamento?.id),
+                                            orElse:
+                                                () =>
+                                                    values['departamento'] ??
+                                                    initial?.departamento,
+                                          );
+                                      return Employee(
+                                        id: initial?.id ?? 0,
+                                        cedula:
+                                            values['cedula'] ??
+                                            initial?.cedula ??
+                                            '',
+                                        nombre:
+                                            values['nombre'] ??
+                                            initial?.nombre ??
+                                            '',
+                                        departamento: matchedDepartment,
+                                        estado:
+                                            values['estado'] ??
+                                            initial?.estado ??
+                                            'Activo',
+                                      );
+                                    },
+                                    fields: [
+                                      FormFieldDefinition<Employee>(
+                                        key: 'cedula',
+                                        label: 'Cédula',
+                                        getValue: (e) => e?.cedula ?? '',
+                                        applyValue:
+                                            (e, v) => Employee(
+                                              id: e?.id ?? 0,
+                                              cedula: v,
+                                              nombre: e?.nombre ?? '',
+                                              departamento: e!.departamento,
+                                              estado: e.estado,
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null || v.isEmpty)
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<Employee>(
+                                        key: 'nombre',
+                                        label: 'Nombre',
+                                        getValue: (e) => e?.nombre ?? '',
+                                        applyValue:
+                                            (e, v) => Employee(
+                                              id: e?.id ?? 0,
+                                              cedula: e?.cedula ?? '',
+                                              nombre: v,
+                                              departamento: e!.departamento,
+                                              estado: e.estado,
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null || v.isEmpty)
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<Employee>(
+                                        key: 'departamento',
+                                        label: 'Departamento',
+                                        fieldType: 'dropdown',
+                                        options: departments,
+                                        getValue: (e) => e?.departamento,
+                                        applyValue:
+                                            (e, v) => Employee(
+                                              id: e?.id ?? 0,
+                                              cedula: e?.cedula ?? '',
+                                              nombre: e?.nombre ?? '',
+                                              departamento: v as Department,
+                                              estado: e?.estado ?? 'Activo',
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                v == null
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                        display: (d) => d.nombre,
+                                      ),
+                                      FormFieldDefinition<Employee>(
+                                        key: 'estado',
+                                        label: 'Estado',
+                                        fieldType: 'dropdown',
+                                        options: ['Activo', 'Inactivo'],
+                                        getValue: (e) => e?.estado ?? 'Activo',
+                                        applyValue:
+                                            (e, v) => Employee(
+                                              id: e?.id ?? 0,
+                                              cedula: e?.cedula ?? '',
+                                              nombre: e?.nombre ?? '',
+                                              departamento: e!.departamento,
+                                              estado: v,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                            );
+                          } else if (value == 'delete') {
                             context.read<EmployeeProvider>().eliminarEmpleado(
                               e.id,
                             );
@@ -209,6 +364,13 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         },
                         itemBuilder:
                             (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
+                              ),
                               const PopupMenuItem(
                                 value: 'delete',
                                 child: ListTile(

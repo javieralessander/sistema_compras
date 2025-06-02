@@ -25,7 +25,7 @@ class EmployeeProvider extends ChangeNotifier {
           (e) =>
               e.nombre.toLowerCase().contains(_busqueda) ||
               e.cedula.toLowerCase().contains(_busqueda) ||
-              e.departamento.toLowerCase().contains(_busqueda) ||
+              e.departamento.nombre.toLowerCase().contains(_busqueda) ||
               e.estado.toLowerCase().contains(_busqueda),
         )
         .toList();
@@ -99,6 +99,19 @@ class EmployeeProvider extends ChangeNotifier {
       _actualizarPagina();
     } catch (e) {
       debugPrint('Error al agregar empleado: $e');
+    }
+  }
+
+  Future<void> actualizarEmpleado(Employee empleado) async {
+    try {
+      final actualizado = await EmployeeService.update(empleado);
+      final index = _todos.indexWhere((e) => e.id == actualizado.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar empleado: $e');
     }
   }
 

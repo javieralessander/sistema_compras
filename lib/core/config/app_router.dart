@@ -18,7 +18,6 @@ import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
 import '../../features/profile/screens/user_profile_screen.dart';
 import '../../features/profile/services/user_profile_service.dart';
-import '../../shared/widgets/custom_google_maps.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -29,12 +28,12 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/login',
-      name: 'login',
+      name: LoginScreen.name,
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: '/register',
-      name: 'register',
+      name: RegisterScreen.name,
       builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
@@ -49,7 +48,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/forgot-password',
-      name: 'forgot-password',
+      name: ForgotPasswordScreen.name,
       builder: (context, state) => const ForgotPasswordScreen(),
     ),
     GoRoute(
@@ -103,11 +102,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => PurchaseOrderScreen(),
     ),
     // La rutas dependiendo de la estructura de la app
-    GoRoute(
-      path: '/maps',
-      name: CustomGoogleMaps.name,
-      builder: (context, state) => const CustomGoogleMaps(),
-    ),
+    // GoRoute(
+    //   path: '/maps',
+    //   name: CustomGoogleMaps.name,
+    //   builder: (context, state) => const CustomGoogleMaps(),
+    // ),
   ],
   errorBuilder:
       (context, state) => Scaffold(

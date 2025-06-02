@@ -1,8 +1,12 @@
+import 'dart:convert';
+import '../../brand/models/brand_model.dart';
+import '../../unit/models/unit_model.dart';
+
 class Article {
   final int id;
   final String descripcion;
-  final String marca;
-  final String unidadMedida;
+  final Brand marca;
+  final Unit unidadMedida;
   final int existencia;
   final String estado;
 
@@ -17,10 +21,10 @@ class Article {
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
-      id: json['id'],
+      id: int.parse(json['id'].toString()),
       descripcion: json['descripcion'],
-      marca: json['marca'],
-      unidadMedida: json['unidadMedida'],
+      marca: Brand.fromJson(json['marca']),
+      unidadMedida: Unit.fromJson(json['unidadMedida']),
       existencia: json['existencia'],
       estado: json['estado'],
     );
@@ -30,10 +34,23 @@ class Article {
     return {
       'id': id,
       'descripcion': descripcion,
-      'marca': marca,
-      'unidadMedida': unidadMedida,
+      'marca': marca.toJson(),
+      'unidadMedida': unidadMedida.toJson(),
       'existencia': existencia,
       'estado': estado,
     };
   }
+
+  // Métodos para trabajar con JSON crudo
+  factory Article.fromRawJson(String str) => Article.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Article && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

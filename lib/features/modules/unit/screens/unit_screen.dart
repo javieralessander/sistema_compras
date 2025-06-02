@@ -50,6 +50,11 @@ class _UnitScreenState extends State<UnitScreen> {
             builder: (_) => GenericFormDialog<Unit>(
               title: 'Agregar Unidad de Medida',
               onSubmit: (data) async => provider.agregarUnidad(data),
+              fromValues: (values, initial) => Unit(
+                id: initial?.id ?? 0,
+                descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
+                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+              ),
               fields: [
                 FormFieldDefinition<Unit>(
                   key: 'descripcion',
@@ -84,7 +89,7 @@ class _UnitScreenState extends State<UnitScreen> {
         columns: [
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.25,
+              width: sizeScreen.width * 0.10,
               child: const Text('ID'),
             ),
           ),
@@ -148,14 +153,59 @@ class _UnitScreenState extends State<UnitScreen> {
                           Icons.more_vert,
                           color: Color(0xFF10B981),
                         ),
-                        onSelected: (value) {
-                          if (value == 'delete') {
-                            context.read<UnitProvider>().eliminarUnidad(
-                              u.id,
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            await showDialog(
+                              context: context,
+                              builder: (_) => GenericFormDialog<Unit>(
+                                title: 'Editar Unidad de Medida',
+                                initialData: u,
+                                onSubmit: (data) async {
+                                  await context.read<UnitProvider>().actualizarUnidad(data);
+                                },
+                                fromValues: (values, initial) => Unit(
+                                  id: initial?.id ?? 0,
+                                  descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
+                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                                ),
+                                fields: [
+                                  FormFieldDefinition<Unit>(
+                                    key: 'descripcion',
+                                    label: 'Descripción',
+                                    getValue: (u) => u?.descripcion ?? '',
+                                    applyValue: (u, v) => Unit(
+                                      id: u?.id ?? 0,
+                                      descripcion: v,
+                                      estado: u?.estado ?? 'Activo',
+                                    ),
+                                  ),
+                                  FormFieldDefinition<Unit>(
+                                    key: 'estado',
+                                    label: 'Estado',
+                                    fieldType: 'dropdown',
+                                    options: ['Activo', 'Inactivo'],
+                                    getValue: (u) => u?.estado ?? 'Activo',
+                                    applyValue: (u, v) => Unit(
+                                      id: u?.id ?? 0,
+                                      descripcion: u?.descripcion ?? '',
+                                      estado: v,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
+                          } else if (value == 'delete') {
+                            context.read<UnitProvider>().eliminarUnidad(u.id);
                           }
                         },
                         itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: Icon(Icons.edit, color: Colors.blue),
+                              title: Text('Editar'),
+                            ),
+                          ),
                           const PopupMenuItem(
                             value: 'delete',
                             child: ListTile(

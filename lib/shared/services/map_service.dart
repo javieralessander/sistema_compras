@@ -85,52 +85,52 @@ class MapService extends ChangeNotifier {
 
   Future<Place?> getPlacemarkFromCoordinates(
       double latitude, double longitude) async {
-    try {
-      final response = await http.get(Uri.parse(
-          '${Environment.googleMapsApiUrl}/geocode/json?latlng=$latitude,$longitude&key=${Environment.androidGoogleKey}&language=es'));
+    // try {
+    //   final response = await http.get(Uri.parse(
+    //       '${Environment.googleMapsApiUrl}/geocode/json?latlng=$latitude,$longitude&key=${Environment.androidGoogleKey}&language=es'));
 
-      final placemarkResponse = PlacemarkResponse.fromJson(response.body);
-      final place = placemarkResponse.results[0];
+    //   final placemarkResponse = PlacemarkResponse.fromJson(response.body);
+    //   final place = placemarkResponse.results[0];
 
-      return place;
-    } catch (e) {
-      // print('Error al obtener la dirección');
-    }
+    //   return place;
+    // } catch (e) {
+    //   // print('Error al obtener la dirección');
+    // }
     return null;
   }
 
   //Buscar places por nombre
   Future<List<Prediction>?> fetchSuggestions(
       String input, String sessionToken) async {
-    try {
-      final response = await http.get(Uri.parse(
-          '${Environment.googleMapsApiUrl}/place/autocomplete/json?input=$input&components=country:do&types=geocode|establishment&language=es&key=${Environment.androidGoogleKey}&sessiontoken=$sessionToken'));
+    // try {
+    //   final response = await http.get(Uri.parse(
+    //       '${Environment.googleMapsApiUrl}/place/autocomplete/json?input=$input&components=country:do&types=geocode|establishment&language=es&key=${Environment.androidGoogleKey}&sessiontoken=$sessionToken'));
 
-      final suggestionResponse = SuggestionResponse.fromJson(response.body);
-      prediction = suggestionResponse.predictions;
-      notifyListeners();
-      return prediction;
-    } catch (e) {
-      print(e);
-      return null;
-    }
+    //   final suggestionResponse = SuggestionResponse.fromJson(response.body);
+    //   prediction = suggestionResponse.predictions;
+    //   notifyListeners();
+    //   return prediction;
+    // } catch (e) {
+    //   print(e);
+    //   return null;
+    // }
   }
 
   Future<LatLng?> getLocationFromAddress(String placeId) async {
-    try {
-      final response = await http.get(Uri.parse(
-          '${Environment.googleMapsApiUrl}/geocode/json?place_id=$placeId&key=${Environment.androidGoogleKey}'));
+    // try {
+    //   final response = await http.get(Uri.parse(
+    //       '${Environment.googleMapsApiUrl}/geocode/json?place_id=$placeId&key=${Environment.androidGoogleKey}'));
 
-      final locationResponse = LocationResponse.fromJson(response.body);
+    //   final locationResponse = LocationResponse.fromJson(response.body);
 
-      double latitude = locationResponse.results[0].geometry.location.lat;
-      double longitude = locationResponse.results[0].geometry.location.lng;
+    //   double latitude = locationResponse.results[0].geometry.location.lat;
+    //   double longitude = locationResponse.results[0].geometry.location.lng;
 
-      // lastLatLng = LatLng(latitude, longitude);
-      return LatLng(latitude, longitude);
-    } catch (e) {
-      print(e);
+    //   // lastLatLng = LatLng(latitude, longitude);
+    //   return LatLng(latitude, longitude);
+    // } catch (e) {
+    //   print(e);
       return null;
-    }
+  //   }
   }
 }

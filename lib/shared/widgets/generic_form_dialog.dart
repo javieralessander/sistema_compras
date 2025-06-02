@@ -5,12 +5,14 @@ class GenericFormDialog<T> extends StatefulWidget {
   final T? initialData;
   final List<FormFieldDefinition<T>> fields;
   final Future<void> Function(T data) onSubmit;
+  final T Function(Map<String, dynamic> values, T? initialData) fromValues;
 
   const GenericFormDialog({
     super.key,
     required this.title,
     required this.fields,
     required this.onSubmit,
+    required this.fromValues,
     this.initialData,
   });
 
@@ -20,6 +22,7 @@ class GenericFormDialog<T> extends StatefulWidget {
 
 class _GenericFormDialogState<T> extends State<GenericFormDialog<T>> {
   final Map<String, dynamic> _formValues = {};
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -35,15 +38,24 @@ class _GenericFormDialogState<T> extends State<GenericFormDialog<T>> {
       title: Text(widget.title),
       content: SizedBox(
         width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: widget.fields.map((field) {
-            return field.buildField(
-              context,
-              _formValues[field.key],
-              (value) => setState(() => _formValues[field.key] = value),
-            );
-          }).toList(),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.fields.map((field) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: field.buildField(
+                    context,
+                    _formValues[field.key],
+                    (value) => setState(() => _formValues[field.key] = value),
+                    widget.initialData,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
         ),
       ),
       actions: [
@@ -53,10 +65,8 @@ class _GenericFormDialogState<T> extends State<GenericFormDialog<T>> {
         ),
         ElevatedButton(
           onPressed: () async {
-            final data = widget.fields.fold<T?>(widget.initialData, (prev, field) {
-              return field.applyValue(prev, _formValues[field.key]);
-            });
-            if (data != null) {
+            if (_formKey.currentState?.validate() ?? false) {
+              final data = widget.fromValues(_formValues, widget.initialData);
               await widget.onSubmit(data);
               if (context.mounted) Navigator.pop(context);
             }
@@ -71,10 +81,13 @@ class _GenericFormDialogState<T> extends State<GenericFormDialog<T>> {
 class FormFieldDefinition<T> {
   final String key;
   final String label;
-  final String fieldType; // 'text' | 'dropdown'
-  final List<String>? options;
+  final String fieldType; // 'text' | 'dropdown' | 'number' | 'custom'
+  final List<dynamic>? options;
   final dynamic Function(T?) getValue;
   final T? Function(T?, dynamic) applyValue;
+  final String? Function(dynamic)? validator;
+  final String Function(dynamic)? display;
+  final Widget Function(BuildContext context, _FormFieldController controller, T? initialData)? builder; // <-- Agregado
 
   FormFieldDefinition({
     required this.key,
@@ -83,32 +96,63 @@ class FormFieldDefinition<T> {
     required this.applyValue,
     this.fieldType = 'text',
     this.options,
+    this.validator,
+    this.display,
+    this.builder, // <-- Agregado
   });
 
   Widget buildField(
     BuildContext context,
     dynamic value,
-    Function(dynamic) onChanged,
-  ) {
+    Function(dynamic) onChanged, [
+    T? initialData,
+  ]) {
+    if (fieldType == 'custom' && builder != null) {
+      return builder!(
+        context,
+        _FormFieldController(
+          value: value,
+          setValue: onChanged,
+        ),
+        initialData,
+      );
+    }
     switch (fieldType) {
       case 'dropdown':
-        return DropdownButtonFormField<String>(
+        return DropdownButtonFormField<dynamic>(
           value: value,
           decoration: InputDecoration(labelText: label),
           items: options!
-              .map((opt) => DropdownMenuItem(
+              .map((opt) => DropdownMenuItem<dynamic>(
                     value: opt,
-                    child: Text(opt),
+                    child: Text(display != null ? display!(opt) : opt.toString()),
                   ))
               .toList(),
           onChanged: onChanged,
+          validator: validator,
+        );
+      case 'number':
+        return TextFormField(
+          initialValue: value?.toString(),
+          decoration: InputDecoration(labelText: label),
+          keyboardType: TextInputType.number,
+          onChanged: (v) => onChanged(int.tryParse(v)),
+          validator: validator,
         );
       default:
         return TextFormField(
           initialValue: value,
           decoration: InputDecoration(labelText: label),
           onChanged: onChanged,
+          validator: validator,
         );
     }
   }
+}
+
+// Controlador para campos personalizados
+class _FormFieldController {
+  dynamic value;
+  final void Function(dynamic) setValue;
+  _FormFieldController({required this.value, required this.setValue});
 }

@@ -9,8 +9,8 @@ import 'secure_storage.dart';
 import '../errors/app_exception.dart';
 import '../errors/error_handler.dart';
 
-class ApiClient {
-  static final String _baseUrl = Environment.odooApiUrl;
+class ApiClientOdoo {
+  static final String _baseUrl = Environment.apiUrl;
 
   static Future<Map<String, dynamic>> _sendRequest(
     String method,

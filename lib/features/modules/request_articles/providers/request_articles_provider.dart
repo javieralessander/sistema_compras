@@ -24,8 +24,15 @@ class RequestProvider extends ChangeNotifier {
         .where(
           (r) =>
               r.empleadoSolicitante.toLowerCase().contains(_busqueda) ||
-              r.articulo.toLowerCase().contains(_busqueda) ||
-              r.unidadMedida.toLowerCase().contains(_busqueda) ||
+              r.items.any(
+                (item) =>
+                    item.articulo.descripcion.toLowerCase().contains(
+                      _busqueda,
+                    ) ||
+                    item.unidadMedida.descripcion.toLowerCase().contains(
+                      _busqueda,
+                    ),
+              ) ||
               r.estado.toLowerCase().contains(_busqueda),
         )
         .toList();
@@ -100,6 +107,19 @@ class RequestProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> actualizarSolicitud(RequestArticles solicitud) async {
+    try {
+      final actualizado = await RequestService.update(solicitud);
+      final index = _todos.indexWhere((r) => r.id == actualizado.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar solicitud: $e');
+    }
+  }
+
   Future<void> eliminarSolicitud(int id) async {
     try {
       await RequestService.delete(id);
@@ -108,5 +128,15 @@ class RequestProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al eliminar solicitud: $e');
     }
+  }
+
+  Future<void> aprobarSolicitud(int id) async {
+    // Lógica para aprobar la solicitud (cambiar estado a 'Aprobado')
+    // Actualiza la lista y notifica listeners
+  }
+
+  Future<void> anularSolicitud(int id) async {
+    // Lógica para anular la solicitud (cambiar estado a 'Rechazado' o 'Anulado')
+    // Actualiza la lista y notifica listeners
   }
 }

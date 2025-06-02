@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/config/api_client.dart';
+import '../../../core/config/api_client_odoo.dart';
 import '../../../core/config/secure_storage.dart';
 import '../../../core/models/user.dart';
 import '../../../core/odoo/payloads.dart';
@@ -24,7 +24,7 @@ class UserProfileService extends ChangeNotifier {
 
       final payload = getUserQueryPayload(userId);
 
-      final response = await ApiClient.post(
+      final response = await ApiClientOdoo.post(
         '/web/dataset/call_kw/res.users/web_read',
         authenticated: true,
         body: {
@@ -36,21 +36,16 @@ class UserProfileService extends ChangeNotifier {
       );
 
       final result = response['body']['result'];
-      if (result == null || result.isEmpty) throw Exception("Usuario no encontrado");
+      if (result == null || result.isEmpty) {
+        throw Exception("Usuario no encontrado");
+      }
       final rawUser = result.first;
       if (rawUser == null) throw Exception("Usuario no encontrado");
-      
 
       user = User(
         id: rawUser['id'].toString(),
-        completeName: rawUser['name'],
-        username: rawUser['login'],
+        name: rawUser['name'],
         email: rawUser['email'],
-        phoneNumber: rawUser['phone'],
-        nationality:
-            rawUser['country_of_birth'] is List
-                ? rawUser['country_of_birth'][1]
-                : rawUser['country_of_birth'],
       );
 
       Preferences.user = user!;

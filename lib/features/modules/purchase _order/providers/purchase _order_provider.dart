@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../request_articles/models/request_articles_model.dart';
 import '../models/purchase_order_model.dart';
 import '../services/purchase _order_service.dart';
 
@@ -25,9 +27,12 @@ class PurchaseOrderProvider extends ChangeNotifier {
               o.numeroOrden.toString().contains(_busqueda) ||
               o.idSolicitud.toString().contains(_busqueda) ||
               o.estado.toLowerCase().contains(_busqueda) ||
-              o.articulo.toLowerCase().contains(_busqueda) ||
-              o.unidadMedida.toLowerCase().contains(_busqueda) ||
-              o.marca.toLowerCase().contains(_busqueda),
+              o.items.any(
+                (item) =>
+                    item.articulo.toLowerCase().contains(_busqueda) ||
+                    item.unidadMedida.toLowerCase().contains(_busqueda) ||
+                    item.marca.toLowerCase().contains(_busqueda),
+              ),
         )
         .toList();
   }
@@ -101,6 +106,21 @@ class PurchaseOrderProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> actualizarOrden(PurchaseOrder orden) async {
+    try {
+      final actualizado = await PurchaseOrderService.update(orden);
+      final index = _todos.indexWhere(
+        (o) => o.numeroOrden == orden.numeroOrden,
+      );
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar orden: $e');
+    }
+  }
+
   Future<void> eliminarOrden(int numeroOrden) async {
     try {
       await PurchaseOrderService.delete(numeroOrden);
@@ -109,5 +129,12 @@ class PurchaseOrderProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al eliminar orden: $e');
     }
+  }
+
+  // Método para generar un nuevo número de orden correlativo
+  int generarNumeroOrden() {
+    if (_todos.isEmpty) return 1;
+    final numeros = _todos.map((o) => o.numeroOrden).toList();
+    return (numeros.isEmpty ? 0 : numeros.reduce((a, b) => a > b ? a : b)) + 1;
   }
 }

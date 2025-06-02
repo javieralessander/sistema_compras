@@ -1,4 +1,4 @@
-import '../config/api_client.dart';
+import '../config/api_client_odoo.dart';
 
 class OdooModelService {
   /// Buscar registros (equivalente a search_read)
@@ -8,7 +8,7 @@ class OdooModelService {
     List<String> fields = const [],
     int limit = 20,
   }) async {
-    final response = await ApiClient.post(
+    final response = await ApiClientOdoo.post(
       '/web/dataset/call_kw',
       authenticated: true,
       body: {
@@ -36,7 +36,7 @@ class OdooModelService {
     required String model,
     required Map<String, dynamic> values,
   }) async {
-    final response = await ApiClient.post(
+    final response = await ApiClientOdoo.post(
       '/web/dataset/call_kw',
       authenticated: true,
       body: {
@@ -60,7 +60,7 @@ class OdooModelService {
     required int id,
     required Map<String, dynamic> values,
   }) async {
-    final response = await ApiClient.post(
+    final response = await ApiClientOdoo.post(
       '/web/dataset/call_kw',
       authenticated: true,
       body: {
@@ -83,7 +83,7 @@ class OdooModelService {
     required String model,
     required int id,
   }) async {
-    final response = await ApiClient.post(
+    final response = await ApiClientOdoo.post(
       '/web/dataset/call_kw',
       authenticated: true,
       body: {

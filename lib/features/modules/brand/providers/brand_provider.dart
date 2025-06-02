@@ -97,6 +97,20 @@ class BrandProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> actualizarMarca(Brand marca) async {
+    try {
+      final actualizado = await BrandService.update(marca);
+      final index = _todos.indexWhere((m) => m.id == marca.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error al actualizar marca: $e');
+    }
+  }
+
   Future<void> eliminarMarca(int id) async {
     try {
       await BrandService.delete(id);

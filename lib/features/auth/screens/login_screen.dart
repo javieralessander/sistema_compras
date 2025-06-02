@@ -92,12 +92,27 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class _LoginForm extends StatelessWidget {
+class _LoginForm extends StatefulWidget {
+  @override
+  State<_LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<_LoginForm> {
+  final formKeyLogin = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final loginService = context.read<LoginService>();
+    final loginService = context.watch<LoginService>();
     final validationForm = FormValidation();
-    GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
 
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -107,20 +122,20 @@ class _LoginForm extends StatelessWidget {
           CustomTextFormField(
             labelText: 'Correo electrónico',
             keyboardType: TextInputType.emailAddress,
+            controller: emailController,
             onChanged: (value) => loginService.email = value,
-            validator: FormValidation().emailValidator(loginService.email),
-            // borderRadius: 32, // Asegúrate de que tu widget soporte esto
-            // prefixIcon: const Icon(Icons.person),
+            validator: FormValidation().emailValidator,
           ),
           const SizedBox(height: 16),
           CustomTextFormField(
             obscureText: loginService.obscureText,
             labelText: 'Contraseña',
             keyboardType: TextInputType.visiblePassword,
+            controller: passwordController,
             onChanged: (value) => loginService.password = value,
-            validator: validationForm.passwordValidator(loginService.password),
-            // borderRadius: 32, // Asegúrate de que tu widget soporte esto
-            // prefixIcon: const Icon(Icons.lock),
+            validator: validationForm.passwordValidator(
+              passwordController.text,
+            ),
             suffixIcon: IconButton(
               style: IconButton.styleFrom(
                 foregroundColor: AppColors.info,
