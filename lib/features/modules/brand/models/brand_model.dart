@@ -7,7 +7,6 @@ class Brand {
 
   Brand({required this.id, required this.descripcion, required this.estado});
 
-
   factory Brand.fromJson(Map<String, dynamic> json) {
     return Brand(
       id: int.parse(json['id'].toString()),
@@ -27,4 +26,12 @@ class Brand {
 
   @override
   String toString() => 'Marca($id - $descripcion)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Brand && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
