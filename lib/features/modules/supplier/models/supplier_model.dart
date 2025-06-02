@@ -32,7 +32,16 @@ class Supplier {
   }
 
   // Métodos para trabajar con JSON crudo
-  factory Supplier.fromRawJson(String str) => Supplier.fromJson(json.decode(str));
+  factory Supplier.fromRawJson(String str) =>
+      Supplier.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Supplier && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }
