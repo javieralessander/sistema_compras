@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/config/api_client.dart';
+import '../../../core/config/api_client_odoo.dart';
 import '../../../core/config/secure_storage.dart';
 import '../../../core/models/user.dart';
 import '../../../core/odoo/payloads.dart';
@@ -24,7 +24,7 @@ class UserProfileService extends ChangeNotifier {
 
       final payload = getUserQueryPayload(userId);
 
-      final response = await ApiClient.post(
+      final response = await ApiClientOdoo.post(
         '/web/dataset/call_kw/res.users/web_read',
         authenticated: true,
         body: {
