@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../core/config/api_client.dart';
+import '../../../core/config/api_client_odoo.dart';
 import '../../../core/config/secure_storage.dart';
 
 class AuthService extends ChangeNotifier {
