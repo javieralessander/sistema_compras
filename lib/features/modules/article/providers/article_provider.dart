@@ -3,6 +3,9 @@ import '../models/article_model.dart';
 import '../services/article_service.dart';
 
 class ArticleProvider extends ChangeNotifier {
+  ArticleProvider() {
+    cargarArticulos();
+  }
   List<Article> _todos = [];
   List<Article> _pagina = [];
 
@@ -23,8 +26,8 @@ class ArticleProvider extends ChangeNotifier {
         .where(
           (a) =>
               a.descripcion.toLowerCase().contains(_busqueda) ||
-              a.marca.toLowerCase().contains(_busqueda) ||
-              a.unidadMedida.toLowerCase().contains(_busqueda) ||
+              a.marca.descripcion.toLowerCase().contains(_busqueda) ||
+              a.unidadMedida.descripcion.toLowerCase().contains(_busqueda) ||
               a.estado.toLowerCase().contains(_busqueda),
         )
         .toList();
@@ -96,6 +99,19 @@ class ArticleProvider extends ChangeNotifier {
       _actualizarPagina();
     } catch (e) {
       debugPrint('Error al agregar artículo: $e');
+    }
+  }
+
+  Future<void> actualizarArticulo(Article articulo) async {
+    try {
+      final actualizado = await ArticleService.update(articulo);
+      final index = _todos.indexWhere((a) => a.id == actualizado.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar artículo: $e');
     }
   }
 
