@@ -4,6 +4,10 @@ import '../../../../core/config/app_theme.dart';
 import '../../../../shared/widgets/generic_appbar.dart';
 import '../../../../shared/widgets/generic_data_table.dart';
 import '../../../../shared/widgets/generic_form_dialog.dart';
+import '../../../../shared/widgets/multi_article_form_field.dart';
+import '../../article/models/article_model.dart';
+import '../../article/providers/article_provider.dart';
+import '../../unit/providers/unit_provider.dart';
 import '../models/request_articles_model.dart';
 import '../providers/request_articles_provider.dart';
 
@@ -27,6 +31,24 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<RequestProvider>();
+    final articleOptions = context.watch<ArticleProvider>().articulos;
+    final unitOptions = context.watch<UnitProvider>().unidades;
+    //  final isCompras = context.watch<UserProvider>().isCompras;
+    final isCompras = true;
+
+    List<RequestArticleItem> mapInitialItemsToOptions(
+      List<RequestArticleItem> initialItems,
+      List<Article> articleOptions,
+    ) {
+      return initialItems.map((item) {
+        final matchedArticle = articleOptions.firstWhere(
+          (a) => a.id == item.articulo.id,
+          orElse: () => item.articulo,
+        );
+        return item.copyWith(articulo: matchedArticle);
+      }).toList();
+    }
+
     final sizeScreen = MediaQuery.of(context).size;
     final isMobile = sizeScreen.width < 800;
 
@@ -45,103 +67,126 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
         onItemsPerPageChanged: provider.cambiarRegistrosPorPagina,
         onSearch: (value) => provider.busqueda = value,
         topRightWidget: FloatingActionButton.extended(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (_) => GenericFormDialog<RequestArticles>(
-              title: 'Agregar Solicitud',
-              onSubmit: (data) async => provider.agregarSolicitud(data),
-              fields: [
-                FormFieldDefinition<RequestArticles>(
-                  key: 'empleadoSolicitante',
-                  label: 'Empleado Solicitante',
-                  getValue: (r) => r?.empleadoSolicitante ?? '',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: v,
-                    fechaSolicitud: r?.fechaSolicitud ?? DateTime.now(),
-                    articulo: r?.articulo ?? '',
-                    cantidad: r?.cantidad ?? 0,
-                    unidadMedida: r?.unidadMedida ?? '',
-                    estado: r?.estado ?? 'Pendiente',
-                  ),
-                ),
-                FormFieldDefinition<RequestArticles>(
-                  key: 'fechaSolicitud',
-                  label: 'Fecha Solicitud',
-                  fieldType: 'date',
-                  getValue: (r) => r?.fechaSolicitud.toIso8601String().split('T').first ?? '',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: r?.empleadoSolicitante ?? '',
-                    fechaSolicitud: DateTime.tryParse(v) ?? DateTime.now(),
-                    articulo: r?.articulo ?? '',
-                    cantidad: r?.cantidad ?? 0,
-                    unidadMedida: r?.unidadMedida ?? '',
-                    estado: r?.estado ?? 'Pendiente',
-                  ),
-                ),
-                FormFieldDefinition<RequestArticles>(
-                  key: 'articulo',
-                  label: 'Artículo',
-                  getValue: (r) => r?.articulo ?? '',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: r?.empleadoSolicitante ?? '',
-                    fechaSolicitud: r?.fechaSolicitud ?? DateTime.now(),
-                    articulo: v,
-                    cantidad: r?.cantidad ?? 0,
-                    unidadMedida: r?.unidadMedida ?? '',
-                    estado: r?.estado ?? 'Pendiente',
-                  ),
-                ),
-                FormFieldDefinition<RequestArticles>(
-                  key: 'cantidad',
-                  label: 'Cantidad',
-                  fieldType: 'number',
-                  getValue: (r) => r?.cantidad.toString() ?? '0',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: r?.empleadoSolicitante ?? '',
-                    fechaSolicitud: r?.fechaSolicitud ?? DateTime.now(),
-                    articulo: r?.articulo ?? '',
-                    cantidad: int.tryParse(v) ?? 0,
-                    unidadMedida: r?.unidadMedida ?? '',
-                    estado: r?.estado ?? 'Pendiente',
-                  ),
-                ),
-                FormFieldDefinition<RequestArticles>(
-                  key: 'unidadMedida',
-                  label: 'Unidad de Medida',
-                  getValue: (r) => r?.unidadMedida ?? '',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: r?.empleadoSolicitante ?? '',
-                    fechaSolicitud: r?.fechaSolicitud ?? DateTime.now(),
-                    articulo: r?.articulo ?? '',
-                    cantidad: r?.cantidad ?? 0,
-                    unidadMedida: v,
-                    estado: r?.estado ?? 'Pendiente',
-                  ),
-                ),
-                FormFieldDefinition<RequestArticles>(
-                  key: 'estado',
-                  label: 'Estado',
-                  fieldType: 'dropdown',
-                  options: ['Pendiente', 'Aprobado', 'Rechazado'],
-                  getValue: (r) => r?.estado ?? 'Pendiente',
-                  applyValue: (r, v) => RequestArticles(
-                    id: r?.id ?? 0,
-                    empleadoSolicitante: r?.empleadoSolicitante ?? '',
-                    fechaSolicitud: r?.fechaSolicitud ?? DateTime.now(),
-                    articulo: r?.articulo ?? '',
-                    cantidad: r?.cantidad ?? 0,
-                    unidadMedida: r?.unidadMedida ?? '',
-                    estado: v,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          onPressed:
+              () => showDialog(
+                context: context,
+                builder:
+                    (_) => GenericFormDialog<RequestArticles>(
+                      title: 'Agregar Solicitud',
+                      onSubmit: (data) async => provider.agregarSolicitud(data),
+                      fromValues:
+                          (values, initial) => RequestArticles(
+                            id: initial?.id ?? 0,
+                            empleadoSolicitante:
+                                values['empleadoSolicitante'] ??
+                                initial?.empleadoSolicitante ??
+                                '',
+                            fechaSolicitud:
+                                DateTime.tryParse(
+                                  values['fechaSolicitud'] ?? '',
+                                ) ??
+                                initial?.fechaSolicitud ??
+                                DateTime.now(),
+                            items: values['items'] ?? initial?.items ?? [],
+                            estado:
+                                values['estado'] ??
+                                initial?.estado ??
+                                'Pendiente',
+                          ),
+                      fields: [
+                        FormFieldDefinition<RequestArticles>(
+                          key: 'empleadoSolicitante',
+                          label: 'Empleado Solicitante',
+                          getValue: (r) => r?.empleadoSolicitante ?? '',
+                          applyValue:
+                              (r, v) => RequestArticles(
+                                id: r?.id ?? 0,
+                                empleadoSolicitante: v,
+                                fechaSolicitud:
+                                    r?.fechaSolicitud ?? DateTime.now(),
+                                items: r?.items ?? [],
+                                estado: r?.estado ?? 'Pendiente',
+                              ),
+                          validator:
+                              (v) =>
+                                  (v == null || v.isEmpty)
+                                      ? 'Campo requerido'
+                                      : null,
+                        ),
+                        FormFieldDefinition<RequestArticles>(
+                          key: 'fechaSolicitud',
+                          label: 'Fecha Solicitud',
+                          fieldType: 'date',
+                          getValue:
+                              (r) =>
+                                  r?.fechaSolicitud
+                                      .toIso8601String()
+                                      .split('T')
+                                      .first ??
+                                  '',
+                          applyValue:
+                              (r, v) => RequestArticles(
+                                id: r?.id ?? 0,
+                                empleadoSolicitante:
+                                    r?.empleadoSolicitante ?? '',
+                                fechaSolicitud:
+                                    DateTime.tryParse(v) ?? DateTime.now(),
+                                items: r?.items ?? [],
+                                estado: r?.estado ?? 'Pendiente',
+                              ),
+                        ),
+                        // Campo personalizado para varios artículos
+                        FormFieldDefinition<RequestArticles>(
+                          key: 'items',
+                          label: 'Artículos solicitados',
+                          fieldType: 'custom',
+                          builder: (context, controller, initial) {
+                            return MultiArticleFormField(
+                              initialItems: initial?.items ?? [],
+                              articleOptions: articleOptions,
+                              unitOptions: unitOptions,
+                              onChanged: (items) {
+                                controller.setValue(items);
+                              },
+                            );
+                          },
+                          getValue: (r) => r?.items ?? [],
+                          applyValue:
+                              (r, v) => RequestArticles(
+                                id: r?.id ?? 0,
+                                empleadoSolicitante:
+                                    r?.empleadoSolicitante ?? '',
+                                fechaSolicitud:
+                                    r?.fechaSolicitud ?? DateTime.now(),
+                                items: v as List<RequestArticleItem>,
+                                estado: r?.estado ?? 'Pendiente',
+                              ),
+                          validator:
+                              (v) =>
+                                  (v == null || (v is List && v.isEmpty))
+                                      ? 'Debe agregar al menos un artículo'
+                                      : null,
+                        ),
+                        FormFieldDefinition<RequestArticles>(
+                          key: 'estado',
+                          label: 'Estado',
+                          fieldType: 'dropdown',
+                          options: ['Pendiente', 'Aprobado', 'Rechazado'],
+                          getValue: (r) => r?.estado ?? 'Pendiente',
+                          applyValue:
+                              (r, v) => RequestArticles(
+                                id: r?.id ?? 0,
+                                empleadoSolicitante:
+                                    r?.empleadoSolicitante ?? '',
+                                fechaSolicitud:
+                                    r?.fechaSolicitud ?? DateTime.now(),
+                                items: r?.items ?? [],
+                                estado: v,
+                              ),
+                        ),
+                      ],
+                    ),
+              ),
           icon: const Icon(Icons.add),
           label: const Text('Agregar solicitud'),
           backgroundColor: AppColors.success,
@@ -186,7 +231,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
           ),
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.15,
+              width: sizeScreen.width * 0.10,
               child: const Text('Estado'),
             ),
           ),
@@ -198,83 +243,274 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
           ),
         ],
         rowBuilder: (items) {
-          return items
-              .map(
-                (r) => DataRow(
-                  cells: [
-                    DataCell(Text(r.id.toString())),
-                    DataCell(Text(r.empleadoSolicitante)),
-                    DataCell(Text(
-                      r.fechaSolicitud.toIso8601String().split('T').first,
-                    )),
-                    DataCell(Text(r.articulo)),
-                    DataCell(Text(r.cantidad.toString())),
-                    DataCell(Text(r.unidadMedida)),
-                    DataCell(
-                      Chip(
-                        shape: StadiumBorder(
-                          side: BorderSide(
-                            color: r.estado == 'Aprobado'
+          return items.map((r) {
+            final firstItem = r.items.isNotEmpty ? r.items.first : null;
+            return DataRow(
+              cells: [
+                DataCell(Text(r.id.toString())),
+                DataCell(Text(r.empleadoSolicitante)),
+                DataCell(
+                  Text(r.fechaSolicitud.toIso8601String().split('T').first),
+                ),
+                DataCell(Text(firstItem?.articulo.descripcion ?? '')),
+                DataCell(Text(firstItem?.cantidad.toString() ?? '')),
+                DataCell(Text(firstItem?.unidadMedida.descripcion ?? '')),
+                DataCell(
+                  Chip(
+                    shape: StadiumBorder(
+                      side: BorderSide(
+                        color:
+                            r.estado == 'Aprobado'
                                 ? AppColors.success
                                 : r.estado == 'Rechazado'
-                                    ? AppColors.danger
-                                    : AppColors.warning,
-                          ),
-                        ),
-                        backgroundColor: r.estado == 'Aprobado'
+                                ? AppColors.danger
+                                : AppColors.warning,
+                      ),
+                    ),
+                    backgroundColor:
+                        r.estado == 'Aprobado'
                             ? AppColors.success.withOpacity(0.15)
                             : r.estado == 'Rechazado'
-                                ? AppColors.danger.withOpacity(0.15)
-                                : AppColors.warning.withOpacity(0.15),
-                        label: SizedBox(
-                          width: sizeScreen.width * 0.06,
-                          child: Text(
-                            r.estado,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: r.estado == 'Aprobado'
+                            ? AppColors.danger.withOpacity(0.15)
+                            : AppColors.warning.withOpacity(0.15),
+                    label: SizedBox(
+                      width: sizeScreen.width * 0.06,
+                      child: Text(
+                        r.estado,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color:
+                              r.estado == 'Aprobado'
                                   ? AppColors.success
                                   : r.estado == 'Rechazado'
-                                      ? AppColors.danger
-                                      : AppColors.warning,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
+                                  ? AppColors.danger
+                                  : AppColors.warning,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    DataCell(
+                  ),
+                ),
+                DataCell(
+                  Row(
+                    children: [
                       PopupMenuButton<String>(
                         icon: const Icon(
                           Icons.more_vert,
                           color: Color(0xFF10B981),
                         ),
-                        onSelected: (value) {
-                          if (value == 'delete') {
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            await showDialog(
+                              context: context,
+                              builder:
+                                  (_) => GenericFormDialog<RequestArticles>(
+                                    title: 'Editar Solicitud',
+                                    initialData: r,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<RequestProvider>()
+                                          .actualizarSolicitud(data);
+                                    },
+                                    fromValues:
+                                        (values, initial) => RequestArticles(
+                                          id: initial?.id ?? 0,
+                                          empleadoSolicitante:
+                                              values['empleadoSolicitante'] ??
+                                              initial?.empleadoSolicitante ??
+                                              '',
+                                          fechaSolicitud:
+                                              DateTime.tryParse(
+                                                values['fechaSolicitud'] ?? '',
+                                              ) ??
+                                              initial?.fechaSolicitud ??
+                                              DateTime.now(),
+                                          items:
+                                              values['items'] ??
+                                              initial?.items ??
+                                              [],
+                                          estado:
+                                              values['estado'] ??
+                                              initial?.estado ??
+                                              'Pendiente',
+                                        ),
+                                    fields: [
+                                      FormFieldDefinition<RequestArticles>(
+                                        key: 'empleadoSolicitante',
+                                        label: 'Empleado Solicitante',
+                                        getValue:
+                                            (r) => r?.empleadoSolicitante ?? '',
+                                        applyValue:
+                                            (r, v) => RequestArticles(
+                                              id: r?.id ?? 0,
+                                              empleadoSolicitante: v,
+                                              fechaSolicitud:
+                                                  r?.fechaSolicitud ??
+                                                  DateTime.now(),
+                                              items: r?.items ?? [],
+                                              estado: r?.estado ?? 'Pendiente',
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null || v.isEmpty)
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<RequestArticles>(
+                                        key: 'fechaSolicitud',
+                                        label: 'Fecha Solicitud',
+                                        fieldType: 'date',
+                                        getValue:
+                                            (r) =>
+                                                r?.fechaSolicitud
+                                                    .toIso8601String()
+                                                    .split('T')
+                                                    .first ??
+                                                '',
+                                        applyValue:
+                                            (r, v) => RequestArticles(
+                                              id: r?.id ?? 0,
+                                              empleadoSolicitante:
+                                                  r?.empleadoSolicitante ?? '',
+                                              fechaSolicitud:
+                                                  DateTime.tryParse(v) ??
+                                                  DateTime.now(),
+                                              items: r?.items ?? [],
+                                              estado: r?.estado ?? 'Pendiente',
+                                            ),
+                                      ),
+                                      FormFieldDefinition<RequestArticles>(
+                                        key: 'items',
+                                        label: 'Artículos solicitados',
+                                        fieldType: 'custom',
+                                        builder: (
+                                          context,
+                                          controller,
+                                          initial,
+                                        ) {
+                                          final initialItems =
+                                              mapInitialItemsToOptions(
+                                                initial?.items ?? [],
+                                                articleOptions,
+                                              );
+                                          return MultiArticleFormField(
+                                            initialItems: initialItems,
+                                            articleOptions: articleOptions,
+                                            unitOptions: unitOptions,
+                                            onChanged: (items) {
+                                              controller.setValue(items);
+                                            },
+                                          );
+                                        },
+                                        getValue: (r) => r?.items ?? [],
+                                        applyValue:
+                                            (r, v) => RequestArticles(
+                                              id: r?.id ?? 0,
+                                              empleadoSolicitante:
+                                                  r?.empleadoSolicitante ?? '',
+                                              fechaSolicitud:
+                                                  r?.fechaSolicitud ??
+                                                  DateTime.now(),
+                                              items:
+                                                  v is List<RequestArticleItem>
+                                                      ? v
+                                                      : (v is List
+                                                          ? v
+                                                              .cast<
+                                                                RequestArticleItem
+                                                              >()
+                                                          : <
+                                                            RequestArticleItem
+                                                          >[]),
+                                              estado: r?.estado ?? 'Pendiente',
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null ||
+                                                        (v is List &&
+                                                            v.isEmpty))
+                                                    ? 'Debe agregar al menos un artículo'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<RequestArticles>(
+                                        key: 'estado',
+                                        label: 'Estado',
+                                        fieldType: 'dropdown',
+                                        options: [
+                                          'Pendiente',
+                                          'Aprobado',
+                                          'Rechazado',
+                                        ],
+                                        getValue:
+                                            (r) => r?.estado ?? 'Pendiente',
+                                        applyValue:
+                                            (r, v) => RequestArticles(
+                                              id: r?.id ?? 0,
+                                              empleadoSolicitante:
+                                                  r?.empleadoSolicitante ?? '',
+                                              fechaSolicitud:
+                                                  r?.fechaSolicitud ??
+                                                  DateTime.now(),
+                                              items: r?.items ?? [],
+                                              estado: v,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                            );
+                          } else if (value == 'delete') {
                             context.read<RequestProvider>().eliminarSolicitud(
                               r.id,
                             );
                           }
                         },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                        itemBuilder:
+                            (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
                               ),
-                              title: Text('Eliminar'),
-                            ),
-                          ),
-                        ],
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('Eliminar'),
+                                ),
+                              ),
+                            ],
                       ),
-                    ),
-                  ],
+                      if (isCompras && r.estado == 'Pendiente') ...[
+                        IconButton(
+                          icon: Icon(
+                            Icons.check_circle,
+                            color: AppColors.success,
+                          ),
+                          tooltip: 'Aprobar',
+                          onPressed: () async {
+                            await provider.aprobarSolicitud(r.id);
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.cancel, color: AppColors.danger),
+                          tooltip: 'Anular',
+                          onPressed: () async {
+                            await provider.anularSolicitud(r.id);
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              )
-              .toList();
+              ],
+            );
+          }).toList();
         },
       ),
     );
