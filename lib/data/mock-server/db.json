@@ -1,0 +1,110 @@
+{
+  "articulos": [
+    {
+      "id": 1,
+      "descripcion": "Laptop HP",
+      "marca": { "id": 1, "descripcion": "HP", "estado": "Activo" },
+      "unidadMedida": { "id": 1, "descripcion": "Unidad", "estado": "Activo" },
+      "existencia": 10,
+      "estado": "Activo"
+    },
+    {
+      "id": 2,
+      "descripcion": "Monitor Samsung",
+      "marca": { "id": 2, "descripcion": "Samsung", "estado": "Activo" },
+      "unidadMedida": { "id": 1, "descripcion": "Unidad", "estado": "Activo" },
+      "existencia": 5,
+      "estado": "Activo"
+    }
+  ],
+  "unidades": [
+    { "id": 1, "descripcion": "Unidad", "estado": "Activo" },
+    { "id": 2, "descripcion": "Caja", "estado": "Activo" }
+  ],
+  "marcas": [
+    { "id": 1, "descripcion": "HP", "estado": "Activo" },
+    { "id": 2, "descripcion": "Samsung", "estado": "Activo" },
+    { "id": 3, "descripcion": "Canon", "estado": "Activo" }
+  ],
+  "departamentos": [
+    { "id": 1, "nombre": "Ventas", "estado": "Activo" },
+    { "id": 2, "nombre": "IT", "estado": "Activo" },
+    { "id": 3, "nombre": "Recursos Humanos", "estado": "Activo" },
+    { "id": 4, "nombre": "Compras", "estado": "Activo" }
+  ],
+  "empleados": [
+    {
+      "id": 1,
+      "cedula": "00112345678",
+      "nombre": "Juan Pérez",
+      "departamento": { "id": 1, "nombre": "Ventas", "estado": "Activo" },
+      "estado": "Activo"
+    },
+    {
+      "id": 2,
+      "cedula": "00298765432",
+      "nombre": "María Gómez",
+      "departamento": { "id": 2, "nombre": "IT", "estado": "Activo" },
+      "estado": "Activo"
+    }
+  ],
+  "proveedores": [
+    {
+      "id": 1,
+      "nombreComercial": "Distribuidora ABC",
+      "cedulaRnc": "101112223",
+      "estado": "Activo"
+    }
+  ],
+ "solicitudes": [
+  {
+    "id": 1,
+    "empleadoSolicitante": "Juan Pérez",
+    "fechaSolicitud": "2024-06-01T00:00:00.000Z",
+    "items": [
+      {
+        "articulo": {
+          "id": 1,
+          "descripcion": "Laptop HP",
+          "marca": { "id": 1, "descripcion": "HP", "estado": "Activo" },
+          "unidadMedida": { "id": 1, "descripcion": "Unidad", "estado": "Activo" },
+          "existencia": 10,
+          "estado": "Activo"
+        },
+        "cantidad": 2,
+        "unidadMedida": { "id": 1, "descripcion": "Unidad", "estado": "Activo" }
+      },
+      {
+        "articulo": {
+          "id": 2,
+          "descripcion": "Monitor Samsung",
+          "marca": { "id": 2, "descripcion": "Samsung", "estado": "Activo" },
+          "unidadMedida": { "id": 2, "descripcion": "Caja", "estado": "Activo" },
+          "existencia": 5,
+          "estado": "Activo"
+        },
+        "cantidad": 2,
+        "unidadMedida": { "id": 2, "descripcion": "Caja", "estado": "Activo" }
+      }
+    ],
+    "estado": "Pendiente"
+  }
+],
+  "ordenesCompra": [
+    {
+      "numeroOrden": 1,
+      "idSolicitud": 1,
+      "fechaOrden": "2024-06-01T00:00:00.000Z",
+      "estado": "Pendiente",
+      "items": [
+        {
+          "articulo": "Laptop HP",
+          "cantidad": 2,
+          "unidadMedida": "Unidad",
+          "marca": "HP",
+          "costoUnitario": 750.00
+        }
+      ]
+    }
+  ]
+}
