@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Supplier {
   final int id;
   final String cedulaRnc;
@@ -13,7 +15,7 @@ class Supplier {
 
   factory Supplier.fromJson(Map<String, dynamic> json) {
     return Supplier(
-      id: json['id'],
+      id: int.parse(json['id'].toString()),
       cedulaRnc: json['cedulaRnc'],
       nombreComercial: json['nombreComercial'],
       estado: json['estado'],
@@ -28,4 +30,9 @@ class Supplier {
       'estado': estado,
     };
   }
+
+  // Métodos para trabajar con JSON crudo
+  factory Supplier.fromRawJson(String str) => Supplier.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
 }

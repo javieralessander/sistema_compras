@@ -98,6 +98,19 @@ class SupplierProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> actualizarProveedor(Supplier proveedor) async {
+    try {
+      final actualizado = await SupplierService.update(proveedor);
+      final index = _todos.indexWhere((p) => p.id == actualizado.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar proveedor: $e');
+    }
+  }
+
   Future<void> eliminarProveedor(int id) async {
     try {
       await SupplierService.delete(id);
