@@ -36,54 +36,74 @@ class GenericDataTable<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(size.width * 0.03),
       child: SingleChildScrollView(
         child: Card(
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppColors.dark, // Usa tu color
-                      ),
-                    ),
-                    const Spacer(),
-                    if (onSearch != null)
-                      SizedBox(
-                        width: 250,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.search, color: AppColors.gray),
-                            hintText: 'Buscar...',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide.none,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 600;
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: AppColors.dark,
                             ),
-                            filled: true,
-                            fillColor: AppColors.light,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 16,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (onSearch != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: SizedBox(
+                              width: isSmall ? 120 : 220,
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                    color: AppColors.gray,
+                                  ),
+                                  hintText: 'Buscar...',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                  fillColor: AppColors.light,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0,
+                                    horizontal: 12,
+                                  ),
+                                ),
+                                onChanged: onSearch,
+                              ),
                             ),
                           ),
-                          onChanged: onSearch,
-                        ),
-                      ),
-                    if (topRightWidget != null) ...[
-                      const SizedBox(width: 16),
-                      SizedBox(height: 45, child: topRightWidget!),
-                    ],
-                  ],
+                        if (topRightWidget != null)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: SizedBox(height: 40, child: topRightWidget!),
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ),
               const Divider(height: 1, color: AppColors.grayLight),
@@ -123,64 +143,97 @@ class GenericDataTable<T> extends StatelessWidget {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: Row(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: WrapAlignment.spaceBetween,
                   children: [
                     Text(
                       'Mostrando registros ${(items.isEmpty) ? 0 : ((currentPage - 1) * itemsPerPage + 1)} - ${(currentPage * itemsPerPage).clamp(0, totalItems)} de $totalItems',
                       style: const TextStyle(color: AppColors.grayDark),
                     ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_left, color: AppColors.primary),
-                      onPressed: currentPage > 1 ? () => onPageChanged?.call(currentPage - 1) : null,
-                    ),
-                    ...List.generate(totalPages, (i) {
-                      final isSelected = currentPage == i + 1;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: isSelected ? AppColors.light : null,
-                            side: BorderSide(
-                              color: isSelected ? AppColors.primary : AppColors.grayLight,
-                            ),
-                            minimumSize: const Size(36, 36),
-                            padding: EdgeInsets.zero,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.chevron_left,
+                            color: AppColors.primary,
                           ),
-                          onPressed: () => onPageChanged?.call(i + 1),
-                          child: Text(
-                            '${i + 1}',
-                            style: TextStyle(
-                              color: isSelected ? AppColors.primary : AppColors.dark,
-                            ),
-                          ),
+                          onPressed:
+                              currentPage > 1
+                                  ? () => onPageChanged?.call(currentPage - 1)
+                                  : null,
                         ),
-                      );
-                    }),
-                    IconButton(
-                      icon: const Icon(Icons.chevron_right, color: AppColors.primary),
-                      onPressed: currentPage < totalPages ? () => onPageChanged?.call(currentPage + 1) : null,
-                    ),
-                    const SizedBox(width: 16),
-                    const Text('Registros por página', style: TextStyle(color: AppColors.grayDark)),
-                    const SizedBox(width: 8),
-                    DropdownButton<int>(
-                      value: itemsPerPage,
-                      items: const [
-                        DropdownMenuItem(value: 5, child: Text('5')),
-                        DropdownMenuItem(value: 10, child: Text('10')),
-                        DropdownMenuItem(value: 20, child: Text('20')),
+                        ...List.generate(totalPages, (i) {
+                          final isSelected = currentPage == i + 1;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor:
+                                    isSelected ? AppColors.light : null,
+                                side: BorderSide(
+                                  color:
+                                      isSelected
+                                          ? AppColors.primary
+                                          : AppColors.grayLight,
+                                ),
+                                minimumSize: const Size(36, 36),
+                                padding: EdgeInsets.zero,
+                              ),
+                              onPressed: () => onPageChanged?.call(i + 1),
+                              child: Text(
+                                '${i + 1}',
+                                style: TextStyle(
+                                  color:
+                                      isSelected
+                                          ? AppColors.primary
+                                          : AppColors.dark,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.chevron_right,
+                            color: AppColors.primary,
+                          ),
+                          onPressed:
+                              currentPage < totalPages
+                                  ? () => onPageChanged?.call(currentPage + 1)
+                                  : null,
+                        ),
+                        const SizedBox(width: 16),
+                        const Text(
+                          'Registros por página',
+                          style: TextStyle(color: AppColors.grayDark),
+                        ),
+                        const SizedBox(width: 8),
+                        DropdownButton<int>(
+                          value: itemsPerPage,
+                          items: const [
+                            DropdownMenuItem(value: 5, child: Text('5')),
+                            DropdownMenuItem(value: 10, child: Text('10')),
+                            DropdownMenuItem(value: 20, child: Text('20')),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) {
+                              onItemsPerPageChanged?.call(value);
+                            }
+                          },
+                        ),
                       ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          onItemsPerPageChanged?.call(value);
-                        }
-                      },
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
