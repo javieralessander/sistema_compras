@@ -136,31 +136,36 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         if (!isSmall) ...[
           const SizedBox(width: 8),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'JAVIER ALESSANDER MONTERO',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: isMedium ? 11 : 12,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                maxLines: 1,
+          SizedBox(
+            height: isMedium ? 40 : 52,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'JAVIER ALESSANDER MONTERO',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                  Text(
+                    'JA.MONTERO',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 1,
+                  ),
+                ],
               ),
-              Text(
-                'JA.MONTERO',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: isMedium ? 11 : 12,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                maxLines: 1,
-              ),
-            ],
+            ),
           ),
         ],
       ],
@@ -320,4 +325,3 @@ class HorizontalMenuItem extends StatelessWidget {
     );
   }
 }
-// ...existing code...
