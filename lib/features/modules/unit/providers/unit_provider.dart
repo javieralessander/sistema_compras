@@ -3,6 +3,9 @@ import '../models/unit_model.dart';
 import '../services/unit_service.dart';
 
 class UnitProvider extends ChangeNotifier {
+  UnitProvider() {
+    cargarUnidades();
+  }
   List<Unit> _todos = [];
   List<Unit> _pagina = [];
 
@@ -94,6 +97,19 @@ class UnitProvider extends ChangeNotifier {
       _actualizarPagina();
     } catch (e) {
       debugPrint('Error al agregar unidad: $e');
+    }
+  }
+
+  Future<void> actualizarUnidad(Unit unidad) async {
+    try {
+      final actualizado = await UnitService.update(unidad);
+      final index = _todos.indexWhere((u) => u.id == actualizado.id);
+      if (index != -1) {
+        _todos[index] = actualizado;
+        _actualizarPagina();
+      }
+    } catch (e) {
+      debugPrint('Error al actualizar unidad: $e');
     }
   }
 
