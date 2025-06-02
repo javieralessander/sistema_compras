@@ -50,6 +50,11 @@ class _BrandScreenState extends State<BrandScreen> {
             builder: (_) => GenericFormDialog<Brand>(
               title: 'Agregar Marca',
               onSubmit: (data) async => provider.agregarMarca(data),
+              fromValues: (values, initial) => Brand(
+                id: initial?.id ?? 0,
+                descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
+                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+              ),
               fields: [
                 FormFieldDefinition<Brand>(
                   key: 'descripcion',
@@ -60,6 +65,7 @@ class _BrandScreenState extends State<BrandScreen> {
                     descripcion: v,
                     estado: b?.estado ?? 'Activo',
                   ),
+                  validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
                 ),
                 FormFieldDefinition<Brand>(
                   key: 'estado',
@@ -84,7 +90,7 @@ class _BrandScreenState extends State<BrandScreen> {
         columns: [
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.25,
+              width: sizeScreen.width * 0.10,
               child: const Text('ID'),
             ),
           ),
@@ -148,14 +154,60 @@ class _BrandScreenState extends State<BrandScreen> {
                           Icons.more_vert,
                           color: Color(0xFF10B981),
                         ),
-                        onSelected: (value) {
-                          if (value == 'delete') {
-                            context.read<BrandProvider>().eliminarMarca(
-                              b.id,
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            await showDialog(
+                              context: context,
+                              builder: (_) => GenericFormDialog<Brand>(
+                                title: 'Editar Marca',
+                                initialData: b,
+                                onSubmit: (data) async {
+                                  await context.read<BrandProvider>().actualizarMarca(data);
+                                },
+                                fromValues: (values, initial) => Brand(
+                                  id: initial?.id ?? 0,
+                                  descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
+                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                                ),
+                                fields: [
+                                  FormFieldDefinition<Brand>(
+                                    key: 'descripcion',
+                                    label: 'Descripción',
+                                    getValue: (b) => b?.descripcion ?? '',
+                                    applyValue: (b, v) => Brand(
+                                      id: b?.id ?? 0,
+                                      descripcion: v,
+                                      estado: b?.estado ?? 'Activo',
+                                    ),
+                                    validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
+                                  ),
+                                  FormFieldDefinition<Brand>(
+                                    key: 'estado',
+                                    label: 'Estado',
+                                    fieldType: 'dropdown',
+                                    options: ['Activo', 'Inactivo'],
+                                    getValue: (b) => b?.estado ?? 'Activo',
+                                    applyValue: (b, v) => Brand(
+                                      id: b?.id ?? 0,
+                                      descripcion: b?.descripcion ?? '',
+                                      estado: v,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
+                          } else if (value == 'delete') {
+                            context.read<BrandProvider>().eliminarMarca(b.id);
                           }
                         },
                         itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: ListTile(
+                              leading: Icon(Icons.edit, color: Colors.blue),
+                              title: Text('Editar'),
+                            ),
+                          ),
                           const PopupMenuItem(
                             value: 'delete',
                             child: ListTile(
