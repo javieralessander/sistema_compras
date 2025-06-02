@@ -110,14 +110,19 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
               : isMedium
               ? 64
               : 72,
-      title: SvgPicture.asset(
-        'assets/svgs/sicom.svg',
-        height:
-            isSmall
-                ? 32
-                : isMedium
-                ? 40
-                : 52,
+      title: GestureDetector(
+        onTap: () {
+          context.pushReplacementNamed(HomeScreen.name);
+        },
+        child: SvgPicture.asset(
+          'assets/svgs/sicom.svg',
+          height:
+              isSmall
+                  ? 32
+                  : isMedium
+                  ? 40
+                  : 52,
+        ),
       ),
       titleSpacing: isMobile ? 0 : sizeScreen.width * 0.02,
       centerTitle: isMobile,
