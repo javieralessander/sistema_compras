@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/config/api_client.dart';
+import '../../../core/config/api_client_odoo.dart';
 import '../../../core/config/env.dart';
 import '../../../core/config/secure_storage.dart';
 import '../../../core/errors/app_exception.dart';
@@ -35,13 +35,13 @@ class LoginService extends ChangeNotifier {
     isLoading = true;
 
     try {
-      final response = await ApiClient.post(
+      final response = await ApiClientOdoo.post(
         '/web/session/authenticate',
         body: {
           "jsonrpc": "2.0",
           "method": "call",
           "params": {
-            "db": Environment.postgres_db,
+            // "db": Environment.postgres_db,
             "login": 'monterojaviel18@gmail.com',
             "password": 'Code2025*',
             "context": {"lang": "es_DO"},
