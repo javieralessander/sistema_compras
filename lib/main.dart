@@ -58,6 +58,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    // Screen de lo ya hecho
+    // Diagrama de clases UML
+    // Diagrama de casos de uso
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,

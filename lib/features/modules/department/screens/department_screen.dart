@@ -45,43 +45,56 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
         onItemsPerPageChanged: provider.cambiarRegistrosPorPagina,
         onSearch: (value) => provider.busqueda = value,
         topRightWidget: FloatingActionButton.extended(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (_) => GenericFormDialog<Department>(
-              title: 'Agregar Departamento',
-              onSubmit: (data) async => provider.agregarDepartamento(data),
-              fromValues: (values, initial) => Department(
-                id: initial?.id ?? 0,
-                nombre: values['nombre'] ?? initial?.nombre ?? '',
-                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+          onPressed:
+              () => showDialog(
+                context: context,
+                builder:
+                    (_) => GenericFormDialog<Department>(
+                      title: 'Agregar Departamento',
+                      onSubmit:
+                          (data) async => provider.agregarDepartamento(data),
+                      fromValues:
+                          (values, initial) => Department(
+                            id: initial?.id ?? 0,
+                            nombre: values['nombre'] ?? initial?.nombre ?? '',
+                            isActive:
+                                values['isActive'] ??
+                                initial?.isActive ??
+                                'Activo',
+                          ),
+                      fields: [
+                        FormFieldDefinition<Department>(
+                          key: 'nombre',
+                          label: 'Nombre',
+                          getValue: (d) => d?.nombre ?? '',
+                          applyValue:
+                              (d, v) => Department(
+                                id: d?.id ?? 0,
+                                nombre: v,
+                                isActive: d?.isActive ?? true,
+                              ),
+                          validator:
+                              (v) =>
+                                  (v == null || v.isEmpty)
+                                      ? 'Campo requerido'
+                                      : null,
+                        ),
+                        FormFieldDefinition<Department>(
+                          key: 'estado',
+                          label: 'Estado',
+                          fieldType: 'dropdown',
+                          options: ['Activo', 'Inactivo'],
+                          getValue: (d) => d?.isActive ?? 'Activo',
+                          applyValue:
+                              (d, v) => Department(
+                                id: d?.id ?? 0,
+                                nombre: d?.nombre ?? '',
+                                isActive: v,
+                              ),
+                        ),
+                      ],
+                    ),
               ),
-              fields: [
-                FormFieldDefinition<Department>(
-                  key: 'nombre',
-                  label: 'Nombre',
-                  getValue: (d) => d?.nombre ?? '',
-                  applyValue: (d, v) => Department(
-                    id: d?.id ?? 0,
-                    nombre: v,
-                    estado: d?.estado ?? 'Activo',
-                  ),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
-                ),
-                FormFieldDefinition<Department>(
-                  key: 'estado',
-                  label: 'Estado',
-                  fieldType: 'dropdown',
-                  options: ['Activo', 'Inactivo'],
-                  getValue: (d) => d?.estado ?? 'Activo',
-                  applyValue: (d, v) => Department(
-                    id: d?.id ?? 0,
-                    nombre: d?.nombre ?? '',
-                    estado: v,
-                  ),
-                ),
-              ],
-            ),
-          ),
           icon: const Icon(Icons.add),
           label: const Text('Agregar departamento'),
           backgroundColor: AppColors.success,
@@ -124,23 +137,26 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: d.estado == 'Activo'
-                                ? AppColors.success
-                                : AppColors.danger,
+                            color:
+                                d.isActive
+                                    ? AppColors.success
+                                    : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: d.estado == 'Activo'
-                            ? AppColors.success.withOpacity(0.15)
-                            : AppColors.danger.withOpacity(0.15),
+                        backgroundColor:
+                            d.isActive
+                                ? AppColors.success.withOpacity(0.15)
+                                : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.04,
                           child: Text(
-                            d.estado,
+                            d.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: d.estado == 'Activo'
-                                  ? AppColors.success
-                                  : AppColors.danger,
+                              color:
+                                  d.isActive
+                                      ? AppColors.success
+                                      : AppColors.danger,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -158,45 +174,60 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           if (value == 'edit') {
                             await showDialog(
                               context: context,
-                              builder: (_) => GenericFormDialog<Department>(
-                                title: 'Editar Departamento',
-                                initialData: d,
-                                onSubmit: (data) async {
-                                  await context
-                                      .read<DepartmentProvider>()
-                                      .actualizarDepartamento(data);
-                                },
-                                fromValues: (values, initial) => Department(
-                                  id: initial?.id ?? 0,
-                                  nombre: values['nombre'] ?? initial?.nombre ?? '',
-                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
-                                ),
-                                fields: [
-                                  FormFieldDefinition<Department>(
-                                    key: 'nombre',
-                                    label: 'Nombre',
-                                    getValue: (dep) => dep?.nombre ?? '',
-                                    applyValue: (dep, v) => Department(
-                                      id: dep?.id ?? 0,
-                                      nombre: v,
-                                      estado: dep?.estado ?? 'Activo',
-                                    ),
-                                    validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
+                              builder:
+                                  (_) => GenericFormDialog<Department>(
+                                    title: 'Editar Departamento',
+                                    initialData: d,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<DepartmentProvider>()
+                                          .actualizarDepartamento(data);
+                                    },
+                                    fromValues:
+                                        (values, initial) => Department(
+                                          id: initial?.id ?? 0,
+                                          nombre:
+                                              values['nombre'] ??
+                                              initial?.nombre ??
+                                              '',
+                                          isActive:
+                                              values['isActive'] ??
+                                              initial?.isActive ??
+                                              'Activo',
+                                        ),
+                                    fields: [
+                                      FormFieldDefinition<Department>(
+                                        key: 'nombre',
+                                        label: 'Nombre',
+                                        getValue: (dep) => dep?.nombre ?? '',
+                                        applyValue:
+                                            (dep, v) => Department(
+                                              id: dep?.id ?? 0,
+                                              nombre: v,
+                                              isActive: dep?.isActive ?? true,
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null || v.isEmpty)
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<Department>(
+                                        key: 'estado',
+                                        label: 'Estado',
+                                        fieldType: 'dropdown',
+                                        options: ['Activo', 'Inactivo'],
+                                        getValue:
+                                            (dep) => dep?.isActive ?? 'Activo',
+                                        applyValue:
+                                            (dep, v) => Department(
+                                              id: dep?.id ?? 0,
+                                              nombre: dep?.nombre ?? '',
+                                              isActive: v,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                  FormFieldDefinition<Department>(
-                                    key: 'estado',
-                                    label: 'Estado',
-                                    fieldType: 'dropdown',
-                                    options: ['Activo', 'Inactivo'],
-                                    getValue: (dep) => dep?.estado ?? 'Activo',
-                                    applyValue: (dep, v) => Department(
-                                      id: dep?.id ?? 0,
-                                      nombre: dep?.nombre ?? '',
-                                      estado: v,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             );
                           } else if (value == 'delete') {
                             context
@@ -204,25 +235,26 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                 .eliminarDepartamento(d.id);
                           }
                         },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: Icon(Icons.edit, color: Colors.blue),
-                              title: Text('Editar'),
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                        itemBuilder:
+                            (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
                               ),
-                              title: Text('Eliminar'),
-                            ),
-                          ),
-                        ],
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('Eliminar'),
+                                ),
+                              ),
+                            ],
                       ),
                     ),
                   ],

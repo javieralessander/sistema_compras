@@ -54,7 +54,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                 id: initial?.id ?? 0,
                 cedulaRnc: values['cedulaRnc'] ?? initial?.cedulaRnc ?? '',
                 nombreComercial: values['nombreComercial'] ?? initial?.nombreComercial ?? '',
-                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
               ),
               fields: [
                 FormFieldDefinition<Supplier>(
@@ -65,7 +65,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                     id: s?.id ?? 0,
                     cedulaRnc: v,
                     nombreComercial: s?.nombreComercial ?? '',
-                    estado: s?.estado ?? 'Activo',
+                    isActive: s?.isActive ?? true,
                   ),
                 ),
                 FormFieldDefinition<Supplier>(
@@ -76,7 +76,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                     id: s?.id ?? 0,
                     cedulaRnc: s?.cedulaRnc ?? '',
                     nombreComercial: v,
-                    estado: s?.estado ?? 'Activo',
+                    isActive: s?.isActive ?? true,
                   ),
                 ),
                 FormFieldDefinition<Supplier>(
@@ -84,12 +84,12 @@ class _SupplierScreenState extends State<SupplierScreen> {
                   label: 'Estado',
                   fieldType: 'dropdown',
                   options: ['Activo', 'Inactivo'],
-                  getValue: (s) => s?.estado ?? 'Activo',
+                  getValue: (s) => s?.isActive ?? 'Activo',
                   applyValue: (s, v) => Supplier(
                     id: s?.id ?? 0,
                     cedulaRnc: s?.cedulaRnc ?? '',
                     nombreComercial: s?.nombreComercial ?? '',
-                    estado: v,
+                    isActive: v,
                   ),
                 ),
               ],
@@ -144,21 +144,21 @@ class _SupplierScreenState extends State<SupplierScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: s.estado == 'Activo'
+                            color: s.isActive
                                 ? AppColors.success
                                 : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: s.estado == 'Activo'
+                        backgroundColor: s.isActive
                             ? AppColors.success.withOpacity(0.15)
                             : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.06,
                           child: Text(
-                            s.estado,
+                            s.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: s.estado == 'Activo'
+                              color: s.isActive
                                   ? AppColors.success
                                   : AppColors.danger,
                               fontWeight: FontWeight.w600,
@@ -188,7 +188,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                                   id: initial?.id ?? 0,
                                   cedulaRnc: values['cedulaRnc'] ?? initial?.cedulaRnc ?? '',
                                   nombreComercial: values['nombreComercial'] ?? initial?.nombreComercial ?? '',
-                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                                  isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
                                 ),
                                 fields: [
                                   FormFieldDefinition<Supplier>(
@@ -199,7 +199,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                                       id: s?.id ?? 0,
                                       cedulaRnc: v,
                                       nombreComercial: s?.nombreComercial ?? '',
-                                      estado: s?.estado ?? 'Activo',
+                                      isActive: s?.isActive ?? true,
                                     ),
                                   ),
                                   FormFieldDefinition<Supplier>(
@@ -210,7 +210,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                                       id: s?.id ?? 0,
                                       cedulaRnc: s?.cedulaRnc ?? '',
                                       nombreComercial: v,
-                                      estado: s?.estado ?? 'Activo',
+                                      isActive: s?.isActive ?? true,
                                     ),
                                   ),
                                   FormFieldDefinition<Supplier>(
@@ -218,12 +218,12 @@ class _SupplierScreenState extends State<SupplierScreen> {
                                     label: 'Estado',
                                     fieldType: 'dropdown',
                                     options: ['Activo', 'Inactivo'],
-                                    getValue: (s) => s?.estado ?? 'Activo',
+                                    getValue: (s) => s?.isActive ?? 'Activo',
                                     applyValue: (s, v) => Supplier(
                                       id: s?.id ?? 0,
                                       cedulaRnc: s?.cedulaRnc ?? '',
                                       nombreComercial: s?.nombreComercial ?? '',
-                                      estado: v,
+                                      isActive: v,
                                     ),
                                   ),
                                 ],

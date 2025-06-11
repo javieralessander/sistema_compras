@@ -28,7 +28,7 @@ class ArticleProvider extends ChangeNotifier {
               a.descripcion.toLowerCase().contains(_busqueda) ||
               a.marca.descripcion.toLowerCase().contains(_busqueda) ||
               a.unidadMedida.descripcion.toLowerCase().contains(_busqueda) ||
-              a.estado.toLowerCase().contains(_busqueda),
+              a.isActive.toString().toLowerCase().contains(_busqueda),
         )
         .toList();
   }

@@ -20,11 +20,7 @@ class BrandProvider extends ChangeNotifier {
   List<Brand> get _filtrados {
     if (_busqueda.isEmpty) return _todos;
     return _todos
-        .where(
-          (m) =>
-              m.descripcion.toLowerCase().contains(_busqueda) ||
-              m.estado.toLowerCase().contains(_busqueda),
-        )
+        .where((m) => m.descripcion.toLowerCase().contains(_busqueda))
         .toList();
   }
 

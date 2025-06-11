@@ -74,8 +74,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 ) ??
                                 initial?.existencia ??
                                 0,
-                            estado:
-                                values['estado'] ?? initial?.estado ?? 'Activo',
+                            isActive:
+                                values['isActive'] ??
+                                initial?.isActive ??
+                                'Activo',
                           ),
                       fields: [
                         FormFieldDefinition<Article>(
@@ -89,7 +91,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 marca: a!.marca,
                                 unidadMedida: a.unidadMedida,
                                 existencia: a.existencia,
-                                estado: a.estado,
+                                isActive: a.isActive,
                               ),
                           validator:
                               (v) =>
@@ -110,7 +112,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 marca: v as Brand,
                                 unidadMedida: a!.unidadMedida,
                                 existencia: a.existencia,
-                                estado: a.estado,
+                                isActive: a.isActive,
                               ),
                           display: (b) => (b as Brand).descripcion,
                           validator:
@@ -129,7 +131,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 marca: a!.marca,
                                 unidadMedida: v as Unit,
                                 existencia: a.existencia,
-                                estado: a.estado,
+                                isActive: a.isActive,
                               ),
                           display: (u) => (u as Unit).descripcion,
                           validator:
@@ -147,7 +149,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 marca: a!.marca,
                                 unidadMedida: a.unidadMedida,
                                 existencia: int.tryParse(v.toString()) ?? 0,
-                                estado: a.estado,
+                                isActive: a.isActive,
                               ),
                           validator:
                               (v) =>
@@ -156,11 +158,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                       : null,
                         ),
                         FormFieldDefinition<Article>(
-                          key: 'estado',
-                          label: 'Estado',
+                          key: 'isActive',
+                          label: 'isActive',
                           fieldType: 'dropdown',
                           options: ['Activo', 'Inactivo'],
-                          getValue: (a) => a?.estado ?? 'Activo',
+                          getValue: (a) => a?.isActive ?? 'Activo',
                           applyValue:
                               (a, v) => Article(
                                 id: a?.id ?? 0,
@@ -168,7 +170,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 marca: a!.marca,
                                 unidadMedida: a.unidadMedida,
                                 existencia: a.existencia,
-                                estado: v,
+                                isActive: v,
                               ),
                         ),
                       ],
@@ -242,23 +244,23 @@ class _ArticleScreenState extends State<ArticleScreen> {
                         shape: StadiumBorder(
                           side: BorderSide(
                             color:
-                                a.estado == 'Activo'
+                                a.isActive
                                     ? AppColors.success
                                     : AppColors.danger,
                           ),
                         ),
                         backgroundColor:
-                            a.estado == 'Activo'
+                            a.isActive
                                 ? AppColors.success.withOpacity(0.15)
                                 : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.06,
                           child: Text(
-                            a.estado,
+                            a.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color:
-                                  a.estado == 'Activo'
+                                  a.isActive
                                       ? AppColors.success
                                       : AppColors.danger,
                               fontWeight: FontWeight.w600,
@@ -307,9 +309,9 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               ) ??
                                               initial?.existencia ??
                                               0,
-                                          estado:
-                                              values['estado'] ??
-                                              initial?.estado ??
+                                          isActive:
+                                              values['isActive'] ??
+                                              initial?.isActive ??
                                               'Activo',
                                         ),
                                     fields: [
@@ -324,7 +326,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               marca: a!.marca,
                                               unidadMedida: a.unidadMedida,
                                               existencia: a.existencia,
-                                              estado: a.estado,
+                                              isActive: a.isActive,
                                             ),
                                         validator:
                                             (v) =>
@@ -345,7 +347,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               marca: v as Brand,
                                               unidadMedida: a!.unidadMedida,
                                               existencia: a.existencia,
-                                              estado: a.estado,
+                                              isActive: a.isActive,
                                             ),
                                         display:
                                             (b) => (b as Brand).descripcion,
@@ -368,7 +370,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               marca: a!.marca,
                                               unidadMedida: v as Unit,
                                               existencia: a.existencia,
-                                              estado: a.estado,
+                                              isActive: a.isActive,
                                             ),
                                         display: (u) => (u as Unit).descripcion,
                                         validator:
@@ -393,7 +395,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               existencia:
                                                   int.tryParse(v.toString()) ??
                                                   0,
-                                              estado: a.estado,
+                                              isActive: a.isActive,
                                             ),
                                         validator:
                                             (v) =>
@@ -407,7 +409,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                         label: 'Estado',
                                         fieldType: 'dropdown',
                                         options: ['Activo', 'Inactivo'],
-                                        getValue: (a) => a?.estado ?? 'Activo',
+                                        getValue:
+                                            (a) => a?.isActive ?? 'Activo',
                                         applyValue:
                                             (a, v) => Article(
                                               id: a?.id ?? 0,
@@ -415,7 +418,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                               marca: a!.marca,
                                               unidadMedida: a.unidadMedida,
                                               existencia: a.existencia,
-                                              estado: v,
+                                              isActive: v,
                                             ),
                                       ),
                                     ],

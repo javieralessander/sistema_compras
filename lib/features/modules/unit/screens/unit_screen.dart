@@ -45,42 +45,56 @@ class _UnitScreenState extends State<UnitScreen> {
         onItemsPerPageChanged: provider.cambiarRegistrosPorPagina,
         onSearch: (value) => provider.busqueda = value,
         topRightWidget: FloatingActionButton.extended(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (_) => GenericFormDialog<Unit>(
-              title: 'Agregar Unidad de Medida',
-              onSubmit: (data) async => provider.agregarUnidad(data),
-              fromValues: (values, initial) => Unit(
-                id: initial?.id ?? 0,
-                descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+          onPressed:
+              () => showDialog(
+                context: context,
+                builder:
+                    (_) => GenericFormDialog<Unit>(
+                      title: 'Agregar Unidad de Medida',
+                      onSubmit: (data) async => provider.agregarUnidad(data),
+                      fromValues:
+                          (values, initial) => Unit(
+                            id: initial?.id ?? 0,
+                            descripcion:
+                                values['descripcion'] ??
+                                initial?.descripcion ??
+                                '',
+                            isActive:
+                                (values['estado'] ??
+                                            initial?.isActive ??
+                                            true) ==
+                                        'Activo'
+                                    ? true
+                                    : false,
+                          ),
+                      fields: [
+                        FormFieldDefinition<Unit>(
+                          key: 'descripcion',
+                          label: 'Descripción',
+                          getValue: (u) => u?.descripcion ?? '',
+                          applyValue:
+                              (u, v) => Unit(
+                                id: u?.id ?? 0,
+                                descripcion: v,
+                                isActive: u?.isActive ?? true,
+                              ),
+                        ),
+                        FormFieldDefinition<Unit>(
+                          key: 'isActive',
+                          label: 'Estado',
+                          fieldType: 'dropdown',
+                          options: ['Activo', 'Inactivo'],
+                          getValue: (u) => u?.isActive ?? true,
+                          applyValue:
+                              (u, v) => Unit(
+                                id: u?.id ?? 0,
+                                descripcion: u?.descripcion ?? '',
+                                isActive: v,
+                              ),
+                        ),
+                      ],
+                    ),
               ),
-              fields: [
-                FormFieldDefinition<Unit>(
-                  key: 'descripcion',
-                  label: 'Descripción',
-                  getValue: (u) => u?.descripcion ?? '',
-                  applyValue: (u, v) => Unit(
-                    id: u?.id ?? 0,
-                    descripcion: v,
-                    estado: u?.estado ?? 'Activo',
-                  ),
-                ),
-                FormFieldDefinition<Unit>(
-                  key: 'estado',
-                  label: 'Estado',
-                  fieldType: 'dropdown',
-                  options: ['Activo', 'Inactivo'],
-                  getValue: (u) => u?.estado ?? 'Activo',
-                  applyValue: (u, v) => Unit(
-                    id: u?.id ?? 0,
-                    descripcion: u?.descripcion ?? '',
-                    estado: v,
-                  ),
-                ),
-              ],
-            ),
-          ),
           icon: const Icon(Icons.add),
           label: const Text('Agregar unidad'),
           backgroundColor: AppColors.success,
@@ -123,23 +137,26 @@ class _UnitScreenState extends State<UnitScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: u.estado == 'Activo'
-                                ? AppColors.success
-                                : AppColors.danger,
+                            color:
+                                u.isActive
+                                    ? AppColors.success
+                                    : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: u.estado == 'Activo'
-                            ? AppColors.success.withOpacity(0.15)
-                            : AppColors.danger.withOpacity(0.15),
+                        backgroundColor:
+                            u.isActive
+                                ? AppColors.success.withOpacity(0.15)
+                                : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.04,
                           child: Text(
-                            u.estado,
+                            u.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: u.estado == 'Activo'
-                                  ? AppColors.success
-                                  : AppColors.danger,
+                              color:
+                                  u.isActive
+                                      ? AppColors.success
+                                      : AppColors.danger,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -157,66 +174,79 @@ class _UnitScreenState extends State<UnitScreen> {
                           if (value == 'edit') {
                             await showDialog(
                               context: context,
-                              builder: (_) => GenericFormDialog<Unit>(
-                                title: 'Editar Unidad de Medida',
-                                initialData: u,
-                                onSubmit: (data) async {
-                                  await context.read<UnitProvider>().actualizarUnidad(data);
-                                },
-                                fromValues: (values, initial) => Unit(
-                                  id: initial?.id ?? 0,
-                                  descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
-                                ),
-                                fields: [
-                                  FormFieldDefinition<Unit>(
-                                    key: 'descripcion',
-                                    label: 'Descripción',
-                                    getValue: (u) => u?.descripcion ?? '',
-                                    applyValue: (u, v) => Unit(
-                                      id: u?.id ?? 0,
-                                      descripcion: v,
-                                      estado: u?.estado ?? 'Activo',
-                                    ),
+                              builder:
+                                  (_) => GenericFormDialog<Unit>(
+                                    title: 'Editar Unidad de Medida',
+                                    initialData: u,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<UnitProvider>()
+                                          .actualizarUnidad(data);
+                                    },
+                                    fromValues:
+                                        (values, initial) => Unit(
+                                          id: initial?.id ?? 0,
+                                          descripcion:
+                                              values['descripcion'] ??
+                                              initial?.descripcion ??
+                                              '',
+                                          isActive:
+                                              values['isActive'] ??
+                                              initial?.isActive ??
+                                              'Activo',
+                                        ),
+                                    fields: [
+                                      FormFieldDefinition<Unit>(
+                                        key: 'descripcion',
+                                        label: 'Descripción',
+                                        getValue: (u) => u?.descripcion ?? '',
+                                        applyValue:
+                                            (u, v) => Unit(
+                                              id: u?.id ?? 0,
+                                              descripcion: v,
+                                              isActive: u?.isActive ?? true,
+                                            ),
+                                      ),
+                                      FormFieldDefinition<Unit>(
+                                        key: 'isActive',
+                                        label: 'Estado',
+                                        fieldType: 'dropdown',
+                                        options: ['Activo', 'Inactivo'],
+                                        getValue: (u) => u?.isActive ?? true,
+                                        applyValue:
+                                            (u, v) => Unit(
+                                              id: u?.id ?? 0,
+                                              descripcion: u?.descripcion ?? '',
+                                              isActive: v,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                  FormFieldDefinition<Unit>(
-                                    key: 'estado',
-                                    label: 'Estado',
-                                    fieldType: 'dropdown',
-                                    options: ['Activo', 'Inactivo'],
-                                    getValue: (u) => u?.estado ?? 'Activo',
-                                    applyValue: (u, v) => Unit(
-                                      id: u?.id ?? 0,
-                                      descripcion: u?.descripcion ?? '',
-                                      estado: v,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             );
                           } else if (value == 'delete') {
                             context.read<UnitProvider>().eliminarUnidad(u.id);
                           }
                         },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: Icon(Icons.edit, color: Colors.blue),
-                              title: Text('Editar'),
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                        itemBuilder:
+                            (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
                               ),
-                              title: Text('Eliminar'),
-                            ),
-                          ),
-                        ],
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('Eliminar'),
+                                ),
+                              ),
+                            ],
                       ),
                     ),
                   ],

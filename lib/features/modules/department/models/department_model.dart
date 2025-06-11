@@ -1,22 +1,22 @@
 import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 class Department {
   final int id;
   final String nombre;
-  final String estado;
+  final bool isActive;
 
-  Department({required this.id, required this.nombre, required this.estado});
+  Department({required this.id, required this.nombre,  this.isActive = true});
 
   factory Department.fromJson(Map<String, dynamic> json) {
     return Department(
       id: int.parse(json['id'].toString()),
       nombre: json['nombre'],
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'nombre': nombre, 'estado': estado};
+    return {'id': id, 'nombre': nombre, 'isActive': isActive};
   }
 
   // Métodos para trabajar con JSON crudo
@@ -30,11 +30,11 @@ class Department {
     return 'Departamento($id - $nombre)';
   }
 
-  Department copyWith({int? id, String? nombre, String? estado}) {
+  Department copyWith({int? id, String? nombre, bool? isActive}) {
     return Department(
       id: id ?? this.id,
       nombre: nombre ?? this.nombre,
-      estado: estado ?? this.estado,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -45,4 +45,29 @@ class Department {
 
   @override
   int get hashCode => id.hashCode;
+}
+
+
+// Enum for department icons, each with an associated CupertinoIconData
+enum DepartmentIcon {
+  defaultIcon(CupertinoIcons.building_2_fill),
+  employeeIcon(CupertinoIcons.person_fill),
+  financeIcon(CupertinoIcons.money_dollar_circle_fill),
+  hrIcon(CupertinoIcons.person_2_fill),
+  marketingIcon(CupertinoIcons.phone),
+  salesIcon(CupertinoIcons.cart_fill),
+  itIcon(CupertinoIcons.desktopcomputer),
+  logisticsIcon(CupertinoIcons.car_fill),
+  supportIcon(CupertinoIcons.phone_fill),
+  researchIcon(CupertinoIcons.lab_flask),
+  legalIcon(CupertinoIcons.book),
+  adminIcon(CupertinoIcons.person_3_fill),
+  operationsIcon(CupertinoIcons.gear_alt_fill),
+  customerServiceIcon(CupertinoIcons.chat_bubble_2_fill),
+  qualityAssuranceIcon(CupertinoIcons.checkmark_shield_fill),
+  trainingIcon(CupertinoIcons.book_fill),;
+
+  final IconData iconData;
+  // Mark the constructor as const to allow constant expressions
+  const DepartmentIcon(this.iconData);
 }

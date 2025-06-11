@@ -26,7 +26,7 @@ class UnitProvider extends ChangeNotifier {
         .where(
           (u) =>
               u.descripcion.toLowerCase().contains(_busqueda) ||
-              u.estado.toLowerCase().contains(_busqueda),
+              u.isActive.toString().toLowerCase().contains(_busqueda),
         )
         .toList();
   }
