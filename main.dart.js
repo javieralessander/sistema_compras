@@ -30678,7 +30678,7 @@ aNA:function aNA(){},
 avz(){var s=0,r=A.A(t.Wq),q
 var $async$avz=A.v(function(a,b){if(a===1)return A.x(b,r)
 while(true)switch(s){case 0:s=3
-return A.D($.aV9().kD("/ordenesCompra",new A.avA(),t.YU),$async$avz)
+return A.D($.aV9().kD("/ordenescompra",new A.avA(),t.YU),$async$avz)
 case 3:q=b
 s=1
 break
@@ -30687,13 +30687,13 @@ return A.z($async$avz,r)},
 avy(a){var s=0,r=A.A(t.H)
 var $async$avy=A.v(function(b,c){if(b===1)return A.x(c,r)
 while(true)switch(s){case 0:s=2
-return A.D($.aV9().kZ(0,"/ordenesCompra/"+a),$async$avy)
+return A.D($.aV9().kZ(0,"/ordenescompra/"+a),$async$avy)
 case 2:return A.y(null,r)}})
 return A.z($async$avy,r)},
 avB(a){var s=0,r=A.A(t.YU),q
 var $async$avB=A.v(function(b,c){if(b===1)return A.x(c,r)
 while(true)switch(s){case 0:s=3
-return A.D($.aV9().lg(0,"/ordenesCompra/"+a.a,a.cE(),new A.avC(),t.YU),$async$avB)
+return A.D($.aV9().lg(0,"/ordenescompra/"+a.a,a.cE(),new A.avC(),t.YU),$async$avB)
 case 3:q=c
 s=1
 break
