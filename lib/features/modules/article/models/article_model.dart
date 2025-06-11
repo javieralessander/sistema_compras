@@ -8,7 +8,7 @@ class Article {
   final Brand marca;
   final Unit unidadMedida;
   final int existencia;
-  final String estado;
+  final bool isActive;
 
   Article({
     required this.id,
@@ -16,7 +16,7 @@ class Article {
     required this.marca,
     required this.unidadMedida,
     required this.existencia,
-    required this.estado,
+    this.isActive = true,
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
@@ -26,7 +26,7 @@ class Article {
       marca: Brand.fromJson(json['marca']),
       unidadMedida: Unit.fromJson(json['unidadMedida']),
       existencia: json['existencia'],
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
@@ -37,7 +37,7 @@ class Article {
       'marca': marca.toJson(),
       'unidadMedida': unidadMedida.toJson(),
       'existencia': existencia,
-      'estado': estado,
+      'isActive': isActive,
     };
   }
 

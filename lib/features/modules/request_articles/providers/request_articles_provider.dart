@@ -23,7 +23,7 @@ class RequestProvider extends ChangeNotifier {
     return _todos
         .where(
           (r) =>
-              r.empleadoSolicitante.toLowerCase().contains(_busqueda) ||
+              r.empleadoSolicitante.nombre.toLowerCase().contains(_busqueda) ||
               r.items.any(
                 (item) =>
                     item.articulo.descripcion.toLowerCase().contains(

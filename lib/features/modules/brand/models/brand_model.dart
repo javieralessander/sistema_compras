@@ -3,20 +3,20 @@ import 'dart:convert';
 class Brand {
   final int id;
   final String descripcion;
-  final String estado;
+  final bool isActive;
 
-  Brand({required this.id, required this.descripcion, required this.estado});
+  Brand({required this.id, required this.descripcion, this.isActive = true});
 
   factory Brand.fromJson(Map<String, dynamic> json) {
     return Brand(
       id: int.parse(json['id'].toString()),
       descripcion: json['descripcion'],
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'descripcion': descripcion, 'estado': estado};
+    return {'id': id, 'descripcion': descripcion, 'isActive': isActive};
   }
 
   // Métodos para trabajar con JSON crudo

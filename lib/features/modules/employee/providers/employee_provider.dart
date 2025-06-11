@@ -26,7 +26,7 @@ class EmployeeProvider extends ChangeNotifier {
               e.nombre.toLowerCase().contains(_busqueda) ||
               e.cedula.toLowerCase().contains(_busqueda) ||
               e.departamento.nombre.toLowerCase().contains(_busqueda) ||
-              e.estado.toLowerCase().contains(_busqueda),
+              e.isActive.toString().toLowerCase().contains(_busqueda),
         )
         .toList();
   }

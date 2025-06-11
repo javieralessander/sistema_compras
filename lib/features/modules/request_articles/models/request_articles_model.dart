@@ -1,16 +1,20 @@
 import 'dart:convert';
+import 'package:sistema_compras/features/modules/employee/models/employee_model.dart';
+
 import '../../article/models/article_model.dart';
 import '../../unit/models/unit_model.dart';
 
 class RequestArticles {
   final int id;
-  final String empleadoSolicitante;
+  final int empleadoId;
+  final Employee empleadoSolicitante;
   final DateTime fechaSolicitud;
   final List<RequestArticleItem> items;
   final String estado;
 
   RequestArticles({
     required this.id,
+    required this.empleadoId,
     required this.empleadoSolicitante,
     required this.fechaSolicitud,
     required this.items,
@@ -20,7 +24,8 @@ class RequestArticles {
   factory RequestArticles.fromJson(Map<String, dynamic> json) {
     return RequestArticles(
       id: int.parse(json['id'].toString()),
-      empleadoSolicitante: json['empleadoSolicitante'],
+      empleadoId: int.parse(json['empleadoId'].toString()),
+      empleadoSolicitante: Employee.fromJson(json['empleadoSolicitante']),
       fechaSolicitud: DateTime.parse(json['fechaSolicitud']),
       items:
           (json['items'] as List)
@@ -34,7 +39,7 @@ class RequestArticles {
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'empleadoSolicitante': empleadoSolicitante,
+    'empleadoId': empleadoId,
     'fechaSolicitud': fechaSolicitud.toIso8601String(),
     'items': items.map((e) => e.toJson()).toList(),
     'estado': estado,

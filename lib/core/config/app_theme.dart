@@ -39,6 +39,19 @@ class AppColors {
   static const Color devtoSecondary = Color(0xffCDB7B3);
   static const Color devtoBackgroundColor = Color(0xff282929);
   static const Color devtoCanvasColors = Color(0xff168E7C);
+
+  static const contentColorBlue = Color(0xFF4285F4);
+  static const contentColorYellow = Color(0xFFF4B400);
+  static const contentColorPurple = Color(0xFFAB47BC);
+  static const contentColorGreen = Color(0xFF0F9D58);
+  static const contentColorRed = Color(0xFFEA4335); // <-- agrega esta línea
+  static const contentColorBlack = Color(0xFF000000);
+  static const contentColorOrange = Color(0xFFFD7E14);
+  static const contentColorPink = Color(0xFFE83E8C);
+  static const Color borderColor = Color(0xFFCCCCCC);
+  static const Color mainTextColor1 = Color(0xFF222222);
+
+  static const Color primaryColor = Color(0xFF1976D2);
 }
 
 class AppTheme {

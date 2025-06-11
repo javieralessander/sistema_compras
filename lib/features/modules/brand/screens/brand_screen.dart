@@ -53,7 +53,7 @@ class _BrandScreenState extends State<BrandScreen> {
               fromValues: (values, initial) => Brand(
                 id: initial?.id ?? 0,
                 descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
               ),
               fields: [
                 FormFieldDefinition<Brand>(
@@ -63,7 +63,7 @@ class _BrandScreenState extends State<BrandScreen> {
                   applyValue: (b, v) => Brand(
                     id: b?.id ?? 0,
                     descripcion: v,
-                    estado: b?.estado ?? 'Activo',
+                    isActive: b?.isActive ?? true,
                   ),
                   validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
                 ),
@@ -72,11 +72,11 @@ class _BrandScreenState extends State<BrandScreen> {
                   label: 'Estado',
                   fieldType: 'dropdown',
                   options: ['Activo', 'Inactivo'],
-                  getValue: (b) => b?.estado ?? 'Activo',
+                  getValue: (b) => b?.isActive ?? 'Activo',
                   applyValue: (b, v) => Brand(
                     id: b?.id ?? 0,
                     descripcion: b?.descripcion ?? '',
-                    estado: v,
+                    isActive: v,
                   ),
                 ),
               ],
@@ -124,21 +124,21 @@ class _BrandScreenState extends State<BrandScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: b.estado == 'Activo'
+                            color: b.isActive
                                 ? AppColors.success
                                 : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: b.estado == 'Activo'
+                        backgroundColor: b.isActive
                             ? AppColors.success.withOpacity(0.15)
                             : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.04,
                           child: Text(
-                            b.estado,
+                            b.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: b.estado == 'Activo'
+                              color: b.isActive
                                   ? AppColors.success
                                   : AppColors.danger,
                               fontWeight: FontWeight.w600,
@@ -167,7 +167,7 @@ class _BrandScreenState extends State<BrandScreen> {
                                 fromValues: (values, initial) => Brand(
                                   id: initial?.id ?? 0,
                                   descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                                  estado: values['estado'] ?? initial?.estado ?? 'Activo',
+                                  isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
                                 ),
                                 fields: [
                                   FormFieldDefinition<Brand>(
@@ -177,20 +177,20 @@ class _BrandScreenState extends State<BrandScreen> {
                                     applyValue: (b, v) => Brand(
                                       id: b?.id ?? 0,
                                       descripcion: v,
-                                      estado: b?.estado ?? 'Activo',
+                                      isActive: b?.isActive ?? true,
                                     ),
                                     validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
                                   ),
                                   FormFieldDefinition<Brand>(
-                                    key: 'estado',
+                                    key: 'isActive',
                                     label: 'Estado',
                                     fieldType: 'dropdown',
                                     options: ['Activo', 'Inactivo'],
-                                    getValue: (b) => b?.estado ?? 'Activo',
+                                    getValue: (b) => b?.isActive ?? 'Activo',
                                     applyValue: (b, v) => Brand(
                                       id: b?.id ?? 0,
                                       descripcion: b?.descripcion ?? '',
-                                      estado: v,
+                                      isActive: v,
                                     ),
                                   ),
                                 ],

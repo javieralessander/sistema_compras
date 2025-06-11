@@ -24,7 +24,7 @@ class SupplierProvider extends ChangeNotifier {
           (p) =>
               p.cedulaRnc.toLowerCase().contains(_busqueda) ||
               p.nombreComercial.toLowerCase().contains(_busqueda) ||
-              p.estado.toLowerCase().contains(_busqueda),
+              p.isActive.toString().toLowerCase().contains(_busqueda),
         )
         .toList();
   }

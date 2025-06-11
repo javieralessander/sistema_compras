@@ -3,9 +3,9 @@ import 'dart:convert';
 class Unit {
   final int id;
   final String descripcion;
-  final String estado;
+  final bool isActive;
 
-  Unit({required this.id, required this.descripcion, required this.estado});
+  Unit({required this.id, required this.descripcion, this.isActive = true});
 
   // Instancias estáticas para pruebas
 
@@ -13,12 +13,12 @@ class Unit {
     return Unit(
       id: int.parse(json['id'].toString()),
       descripcion: json['descripcion'],
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'descripcion': descripcion, 'estado': estado};
+    return {'id': id, 'descripcion': descripcion, 'isActive': isActive};
   }
 
   // Métodos para trabajar con JSON crudo

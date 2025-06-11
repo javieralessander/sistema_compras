@@ -6,14 +6,14 @@ class Employee {
   final String cedula;
   final String nombre;
   final Department departamento; // Relación uno a uno
-  final String estado;
+  final bool isActive;
 
   Employee({
     required this.id,
     required this.cedula,
     required this.nombre,
     required this.departamento,
-    required this.estado,
+    this.isActive = true,
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class Employee {
       cedula: json['cedula'],
       nombre: json['nombre'],
       departamento: Department.fromJson(json['departamento']),
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
@@ -32,7 +32,7 @@ class Employee {
       'cedula': cedula,
       'nombre': nombre,
       'departamento': departamento.toJson(),
-      'estado': estado,
+      'isActive': isActive,
     };
   }
 

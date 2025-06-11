@@ -26,7 +26,7 @@ class DepartmentProvider extends ChangeNotifier {
         .where(
           (d) =>
               d.nombre.toLowerCase().contains(_busqueda) ||
-              d.estado.toLowerCase().contains(_busqueda),
+              d.isActive.toString().toLowerCase().contains(_busqueda),
         )
         .toList();
   }

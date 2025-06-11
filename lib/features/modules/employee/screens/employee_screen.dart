@@ -72,8 +72,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           cedula: values['cedula'] ?? initial?.cedula ?? '',
                           nombre: values['nombre'] ?? initial?.nombre ?? '',
                           departamento: matchedDepartment,
-                          estado:
-                              values['estado'] ?? initial?.estado ?? 'Activo',
+                          isActive:
+                              values['isActive'] ??
+                              initial?.isActive ??
+                              'Activo',
                         );
                       },
                       fields: [
@@ -87,7 +89,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 cedula: v,
                                 nombre: e!.nombre,
                                 departamento: e.departamento,
-                                estado: e.estado,
+                                isActive: e.isActive,
                               ),
                           validator:
                               (v) =>
@@ -105,7 +107,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 cedula: e?.cedula ?? '',
                                 nombre: v,
                                 departamento: e!.departamento,
-                                estado: e.estado,
+                                isActive: e.isActive,
                               ),
                           validator:
                               (v) =>
@@ -125,7 +127,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 cedula: e?.cedula ?? '',
                                 nombre: e?.nombre ?? '',
                                 departamento: v as Department,
-                                estado: e?.estado ?? 'Activo',
+                                isActive: e?.isActive ?? true,
                               ),
                           validator:
                               (v) => v == null ? 'Campo requerido' : null,
@@ -136,14 +138,14 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           label: 'Estado',
                           fieldType: 'dropdown',
                           options: ['Activo', 'Inactivo'],
-                          getValue: (e) => e?.estado ?? 'Activo',
+                          getValue: (e) => e?.isActive ?? 'Activo',
                           applyValue:
                               (e, v) => Employee(
                                 id: e?.id ?? 0,
                                 cedula: e?.cedula ?? '',
                                 nombre: e?.nombre ?? '',
                                 departamento: e!.departamento,
-                                estado: v,
+                                isActive: v,
                               ),
                         ),
                       ],
@@ -206,23 +208,23 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         shape: StadiumBorder(
                           side: BorderSide(
                             color:
-                                e.estado == 'Activo'
+                                e.isActive
                                     ? AppColors.success
                                     : AppColors.danger,
                           ),
                         ),
                         backgroundColor:
-                            e.estado == 'Activo'
+                            e.isActive
                                 ? AppColors.success.withOpacity(0.15)
                                 : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.04,
                           child: Text(
-                            e.estado,
+                            e.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color:
-                                  e.estado == 'Activo'
+                                  e.isActive
                                       ? AppColors.success
                                       : AppColors.danger,
                               fontWeight: FontWeight.w600,
@@ -274,10 +276,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                             initial?.nombre ??
                                             '',
                                         departamento: matchedDepartment,
-                                        estado:
-                                            values['estado'] ??
-                                            initial?.estado ??
-                                            'Activo',
+                                        isActive:
+                                            values['isActive'] ??
+                                            initial?.isActive ??
+                                            'isActive',
                                       );
                                     },
                                     fields: [
@@ -291,7 +293,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                               cedula: v,
                                               nombre: e?.nombre ?? '',
                                               departamento: e!.departamento,
-                                              estado: e.estado,
+                                              isActive: e.isActive,
                                             ),
                                         validator:
                                             (v) =>
@@ -309,7 +311,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                               cedula: e?.cedula ?? '',
                                               nombre: v,
                                               departamento: e!.departamento,
-                                              estado: e.estado,
+                                              isActive: e.isActive,
                                             ),
                                         validator:
                                             (v) =>
@@ -329,7 +331,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                               cedula: e?.cedula ?? '',
                                               nombre: e?.nombre ?? '',
                                               departamento: v as Department,
-                                              estado: e?.estado ?? 'Activo',
+                                              isActive: e?.isActive ?? true,
                                             ),
                                         validator:
                                             (v) =>
@@ -343,14 +345,15 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                         label: 'Estado',
                                         fieldType: 'dropdown',
                                         options: ['Activo', 'Inactivo'],
-                                        getValue: (e) => e?.estado ?? 'Activo',
+                                        getValue:
+                                            (e) => e?.isActive ?? 'Activo',
                                         applyValue:
                                             (e, v) => Employee(
                                               id: e?.id ?? 0,
                                               cedula: e?.cedula ?? '',
                                               nombre: e?.nombre ?? '',
                                               departamento: e!.departamento,
-                                              estado: v,
+                                              isActive: v,
                                             ),
                                       ),
                                     ],

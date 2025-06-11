@@ -4,13 +4,13 @@ class Supplier {
   final int id;
   final String cedulaRnc;
   final String nombreComercial;
-  final String estado;
+  final bool isActive;
 
   Supplier({
     required this.id,
     required this.cedulaRnc,
     required this.nombreComercial,
-    required this.estado,
+    this.isActive = true,
   });
 
   factory Supplier.fromJson(Map<String, dynamic> json) {
@@ -18,7 +18,7 @@ class Supplier {
       id: int.parse(json['id'].toString()),
       cedulaRnc: json['cedulaRnc'],
       nombreComercial: json['nombreComercial'],
-      estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
@@ -27,7 +27,7 @@ class Supplier {
       'id': id,
       'cedulaRnc': cedulaRnc,
       'nombreComercial': nombreComercial,
-      'estado': estado,
+      'isActive': isActive,
     };
   }
 

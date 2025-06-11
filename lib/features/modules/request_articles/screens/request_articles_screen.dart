@@ -77,6 +77,10 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                       fromValues:
                           (values, initial) => RequestArticles(
                             id: initial?.id ?? 0,
+                            empleadoId:
+                                values['empleadoId'] ??
+                                initial?.empleadoId ??
+                                0,
                             empleadoSolicitante:
                                 values['empleadoSolicitante'] ??
                                 initial?.empleadoSolicitante ??
@@ -101,6 +105,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
+                                empleadoId: r?.empleadoId ?? 0,
                                 empleadoSolicitante: v,
                                 fechaSolicitud:
                                     r?.fechaSolicitud ?? DateTime.now(),
@@ -127,12 +132,12 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
-                                empleadoSolicitante:
-                                    r?.empleadoSolicitante ?? '',
+                                empleadoId: r?.empleadoId ?? 0,
+                                empleadoSolicitante: r!.empleadoSolicitante,
                                 fechaSolicitud:
                                     DateTime.tryParse(v) ?? DateTime.now(),
-                                items: r?.items ?? [],
-                                estado: r?.estado ?? 'Pendiente',
+                                items: r.items,
+                                estado: r.estado,
                               ),
                         ),
                         // Campo personalizado para varios artículos
@@ -154,12 +159,11 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
-                                empleadoSolicitante:
-                                    r?.empleadoSolicitante ?? '',
-                                fechaSolicitud:
-                                    r?.fechaSolicitud ?? DateTime.now(),
+                                empleadoId: r?.empleadoId ?? 0,
+                                empleadoSolicitante: r!.empleadoSolicitante,
+                                fechaSolicitud: r.fechaSolicitud,
                                 items: v as List<RequestArticleItem>,
-                                estado: r?.estado ?? 'Pendiente',
+                                estado: r.estado,
                               ),
                           validator:
                               (v) =>
@@ -176,11 +180,10 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
-                                empleadoSolicitante:
-                                    r?.empleadoSolicitante ?? '',
-                                fechaSolicitud:
-                                    r?.fechaSolicitud ?? DateTime.now(),
-                                items: r?.items ?? [],
+                                empleadoId: r?.empleadoId ?? 0,
+                                empleadoSolicitante: r!.empleadoSolicitante,
+                                fechaSolicitud: r.fechaSolicitud,
+                                items: r.items,
                                 estado: v,
                               ),
                         ),
@@ -248,7 +251,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
             return DataRow(
               cells: [
                 DataCell(Text(r.id.toString())),
-                DataCell(Text(r.empleadoSolicitante)),
+                DataCell(Text(r.empleadoSolicitante.nombre)),
                 DataCell(
                   Text(r.fechaSolicitud.toIso8601String().split('T').first),
                 ),
@@ -334,6 +337,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                               values['estado'] ??
                                               initial?.estado ??
                                               'Pendiente',
+                                          empleadoId: initial?.empleadoId ?? 0,
                                         ),
                                     fields: [
                                       FormFieldDefinition<RequestArticles>(
@@ -344,6 +348,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
+                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante: v,
                                               fechaSolicitud:
                                                   r?.fechaSolicitud ??
@@ -371,13 +376,14 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
+                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
-                                                  r?.empleadoSolicitante ?? '',
+                                                  r!.empleadoSolicitante,
                                               fechaSolicitud:
                                                   DateTime.tryParse(v) ??
                                                   DateTime.now(),
-                                              items: r?.items ?? [],
-                                              estado: r?.estado ?? 'Pendiente',
+                                              items: r.items,
+                                              estado: r.estado,
                                             ),
                                       ),
                                       FormFieldDefinition<RequestArticles>(
@@ -407,11 +413,10 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
+                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
-                                                  r?.empleadoSolicitante ?? '',
-                                              fechaSolicitud:
-                                                  r?.fechaSolicitud ??
-                                                  DateTime.now(),
+                                                  r!.empleadoSolicitante,
+                                              fechaSolicitud: r.fechaSolicitud,
                                               items:
                                                   v is List<RequestArticleItem>
                                                       ? v
@@ -447,12 +452,11 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
+                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
-                                                  r?.empleadoSolicitante ?? '',
-                                              fechaSolicitud:
-                                                  r?.fechaSolicitud ??
-                                                  DateTime.now(),
-                                              items: r?.items ?? [],
+                                                  r!.empleadoSolicitante,
+                                              fechaSolicitud: r.fechaSolicitud,
+                                              items: r.items,
                                               estado: v,
                                             ),
                                       ),
