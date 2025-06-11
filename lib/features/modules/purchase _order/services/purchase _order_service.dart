@@ -7,26 +7,26 @@ class PurchaseOrderService {
 
   static Future<List<PurchaseOrder>> getAll() async {
     return await _client.getList<PurchaseOrder>(
-      '/ordenesCompra',
+      '/ordenescompra',
       (e) => PurchaseOrder.fromJson(e as Map<String, dynamic>),
     );
   }
 
   static Future<PurchaseOrder> create(PurchaseOrder orden) async {
     return await _client.post<PurchaseOrder>(
-      '/ordenesCompra',
+      '/ordenescompra',
       orden.toJson(),
       (e) => PurchaseOrder.fromJson(e as Map<String, dynamic>),
     );
   }
 
   static Future<void> delete(int numeroOrden) async {
-    await _client.delete('/ordenesCompra/$numeroOrden');
+    await _client.delete('/ordenescompra/$numeroOrden');
   }
 
   static Future<PurchaseOrder> update(PurchaseOrder orden) async {
     return await _client.put<PurchaseOrder>(
-      '/ordenesCompra/${orden.numeroOrden}',
+      '/ordenescompra/${orden.numeroOrden}',
       orden.toJson(),
       (e) => PurchaseOrder.fromJson(e as Map<String, dynamic>),
     );
