@@ -32,10 +32,9 @@ class Article {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'descripcion': descripcion,
-      'marca': marca.toJson(),
-      'unidadMedida': unidadMedida.toJson(),
+      'marcaId': marca.id,
+      'unidadMedidaId': unidadMedida.id,
       'existencia': existencia,
       'isActive': isActive,
     };

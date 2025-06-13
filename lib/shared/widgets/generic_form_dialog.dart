@@ -43,17 +43,19 @@ class _GenericFormDialogState<T> extends State<GenericFormDialog<T>> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: widget.fields.map((field) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: field.buildField(
-                    context,
-                    _formValues[field.key],
-                    (value) => setState(() => _formValues[field.key] = value),
-                    widget.initialData,
-                  ),
-                );
-              }).toList(),
+              children:
+                  widget.fields.map((field) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: field.buildField(
+                        context,
+                        _formValues[field.key],
+                        (value) =>
+                            setState(() => _formValues[field.key] = value),
+                        widget.initialData,
+                      ),
+                    );
+                  }).toList(),
             ),
           ),
         ),
@@ -87,7 +89,12 @@ class FormFieldDefinition<T> {
   final T? Function(T?, dynamic) applyValue;
   final String? Function(dynamic)? validator;
   final String Function(dynamic)? display;
-  final Widget Function(BuildContext context, _FormFieldController controller, T? initialData)? builder; // <-- Agregado
+  final Widget Function(
+    BuildContext context,
+    _FormFieldController controller,
+    T? initialData,
+  )?
+  builder; // <-- Agregado
 
   FormFieldDefinition({
     required this.key,
@@ -110,10 +117,7 @@ class FormFieldDefinition<T> {
     if (fieldType == 'custom' && builder != null) {
       return builder!(
         context,
-        _FormFieldController(
-          value: value,
-          setValue: onChanged,
-        ),
+        _FormFieldController(value: value, setValue: onChanged),
         initialData,
       );
     }
@@ -122,12 +126,17 @@ class FormFieldDefinition<T> {
         return DropdownButtonFormField<dynamic>(
           value: value,
           decoration: InputDecoration(labelText: label),
-          items: options!
-              .map((opt) => DropdownMenuItem<dynamic>(
-                    value: opt,
-                    child: Text(display != null ? display!(opt) : opt.toString()),
-                  ))
-              .toList(),
+          items:
+              options!
+                  .map(
+                    (opt) => DropdownMenuItem<dynamic>(
+                      value: opt,
+                      child: Text(
+                        display != null ? display!(opt) : opt.toString(),
+                      ),
+                    ),
+                  )
+                  .toList(),
           onChanged: onChanged,
           validator: validator,
         );
@@ -138,6 +147,28 @@ class FormFieldDefinition<T> {
           keyboardType: TextInputType.number,
           onChanged: (v) => onChanged(int.tryParse(v)),
           validator: validator,
+        );
+      case 'date':
+        return InkWell(
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: value ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+            );
+            if (picked != null) onChanged(picked);
+          },
+          child: InputDecorator(
+            decoration: InputDecoration(labelText: label),
+            child: Text(
+              value != null
+                  ? (value is DateTime
+                      ? value.toIso8601String().split('T').first
+                      : value.toString())
+                  : '',
+            ),
+          ),
         );
       default:
         return TextFormField(

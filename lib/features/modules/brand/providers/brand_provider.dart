@@ -3,6 +3,9 @@ import '../models/brand_model.dart';
 import '../services/brand_service.dart';
 
 class BrandProvider extends ChangeNotifier {
+  BrandProvider() {
+    cargarMarcas();
+  }
   List<Brand> _todos = [];
   List<Brand> _pagina = [];
 

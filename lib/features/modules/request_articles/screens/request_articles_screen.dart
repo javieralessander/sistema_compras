@@ -77,116 +77,96 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                       fromValues:
                           (values, initial) => RequestArticles(
                             id: initial?.id ?? 0,
-                            empleadoId:
-                                values['empleadoId'] ??
-                                initial?.empleadoId ??
-                                0,
-                            empleadoSolicitante:
-                                values['empleadoSolicitante'] ??
-                                initial?.empleadoSolicitante ??
-                                '',
                             fechaSolicitud:
-                                DateTime.tryParse(
-                                  values['fechaSolicitud'] ?? '',
-                                ) ??
+                                values['fechaSolicitud'] as DateTime? ??
                                 initial?.fechaSolicitud ??
                                 DateTime.now(),
                             items: values['items'] ?? initial?.items ?? [],
                             estado:
                                 values['estado'] ??
                                 initial?.estado ??
-                                'Pendiente',
+                                'pendiente',
                           ),
                       fields: [
-                        FormFieldDefinition<RequestArticles>(
-                          key: 'empleadoSolicitante',
-                          label: 'Empleado Solicitante',
-                          getValue: (r) => r?.empleadoSolicitante ?? '',
-                          applyValue:
-                              (r, v) => RequestArticles(
-                                id: r?.id ?? 0,
-                                empleadoId: r?.empleadoId ?? 0,
-                                empleadoSolicitante: v,
-                                fechaSolicitud:
-                                    r?.fechaSolicitud ?? DateTime.now(),
-                                items: r?.items ?? [],
-                                estado: r?.estado ?? 'Pendiente',
-                              ),
-                          validator:
-                              (v) =>
-                                  (v == null || v.isEmpty)
-                                      ? 'Campo requerido'
-                                      : null,
-                        ),
+                        // FormFieldDefinition<RequestArticles>(
+                        //   key: 'empleadoSolicitante',
+                        //   label: 'Empleado Solicitante',
+                        //   getValue: (r) => r?.empleadoSolicitante ?? '',
+                        //   applyValue:
+                        //       (r, v) => RequestArticles(
+                        //         id: r?.id ?? 0,
+                        //         empleadoSolicitante: v,
+                        //         fechaSolicitud:
+                        //             r?.fechaSolicitud ?? DateTime.now(),
+                        //         items: r?.items ?? [],
+                        //         estado: r?.estado ?? 'pendiente',
+                        //       ),
+                        //   validator:
+                        //       (v) =>
+                        //           (v == null || v.isEmpty)
+                        //               ? 'Campo requerido'
+                        //               : null,
+                        // ),
                         FormFieldDefinition<RequestArticles>(
                           key: 'fechaSolicitud',
                           label: 'Fecha Solicitud',
                           fieldType: 'date',
-                          getValue:
-                              (r) =>
-                                  r?.fechaSolicitud
-                                      .toIso8601String()
-                                      .split('T')
-                                      .first ??
-                                  '',
+                          getValue: (r) => r?.fechaSolicitud,
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
-                                empleadoId: r?.empleadoId ?? 0,
                                 empleadoSolicitante: r!.empleadoSolicitante,
                                 fechaSolicitud:
-                                    DateTime.tryParse(v) ?? DateTime.now(),
+                                    v as DateTime? ?? DateTime.now(),
                                 items: r.items,
                                 estado: r.estado,
                               ),
                         ),
                         // Campo personalizado para varios artículos
-                        FormFieldDefinition<RequestArticles>(
-                          key: 'items',
-                          label: 'Artículos solicitados',
-                          fieldType: 'custom',
-                          builder: (context, controller, initial) {
-                            return MultiArticleFormField(
-                              initialItems: initial?.items ?? [],
-                              articleOptions: articleOptions,
-                              unitOptions: unitOptions,
-                              onChanged: (items) {
-                                controller.setValue(items);
-                              },
-                            );
-                          },
-                          getValue: (r) => r?.items ?? [],
-                          applyValue:
-                              (r, v) => RequestArticles(
-                                id: r?.id ?? 0,
-                                empleadoId: r?.empleadoId ?? 0,
-                                empleadoSolicitante: r!.empleadoSolicitante,
-                                fechaSolicitud: r.fechaSolicitud,
-                                items: v as List<RequestArticleItem>,
-                                estado: r.estado,
-                              ),
-                          validator:
-                              (v) =>
-                                  (v == null || (v is List && v.isEmpty))
-                                      ? 'Debe agregar al menos un artículo'
-                                      : null,
-                        ),
-                        FormFieldDefinition<RequestArticles>(
-                          key: 'estado',
-                          label: 'Estado',
-                          fieldType: 'dropdown',
-                          options: ['Pendiente', 'Aprobado', 'Rechazado'],
-                          getValue: (r) => r?.estado ?? 'Pendiente',
-                          applyValue:
-                              (r, v) => RequestArticles(
-                                id: r?.id ?? 0,
-                                empleadoId: r?.empleadoId ?? 0,
-                                empleadoSolicitante: r!.empleadoSolicitante,
-                                fechaSolicitud: r.fechaSolicitud,
-                                items: r.items,
-                                estado: v,
-                              ),
-                        ),
+                        // FormFieldDefinition<RequestArticles>(
+                        //   key: 'items',
+                        //   label: 'Artículos solicitados',
+                        //   fieldType: 'custom',
+                        //   builder: (context, controller, initial) {
+                        //     return MultiArticleFormField(
+                        //       initialItems: initial?.items ?? [],
+                        //       articleOptions: articleOptions,
+                        //       unitOptions: unitOptions,
+                        //       onChanged: (items) {
+                        //         controller.setValue(items);
+                        //       },
+                        //     );
+                        //   },
+                        //   getValue: (r) => r?.items ?? [],
+                        //   applyValue:
+                        //       (r, v) => RequestArticles(
+                        //         id: r?.id ?? 0,
+                        //         empleadoSolicitante: r!.empleadoSolicitante,
+                        //         fechaSolicitud: r.fechaSolicitud,
+                        //         items: v as List<RequestArticleItem>,
+                        //         estado: r.estado,
+                        //       ),
+                        //   validator:
+                        //       (v) =>
+                        //           (v == null || (v is List && v.isEmpty))
+                        //               ? 'Debe agregar al menos un artículo'
+                        //               : null,
+                        // ),
+                        // FormFieldDefinition<RequestArticles>(
+                        //   key: 'estado',
+                        //   label: 'Estado',
+                        //   fieldType: 'dropdown',
+                        //   options: ['pendiente', 'aprobada', 'anulada'],
+                        //   getValue: (r) => r?.estado ?? 'pendiente',
+                        //   applyValue:
+                        //       (r, v) => RequestArticles(
+                        //         id: r?.id ?? 0,
+                        //         empleadoSolicitante: r!.empleadoSolicitante,
+                        //         fechaSolicitud: r.fechaSolicitud,
+                        //         items: r.items,
+                        //         estado: v,
+                        //       ),
+                        // ),
                       ],
                     ),
               ),
@@ -204,7 +184,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
           ),
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.10,
+              width: sizeScreen.width * 0.15,
               child: const Text('Empleado'),
             ),
           ),
@@ -216,20 +196,8 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
           ),
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.10,
-              child: const Text('Artículo'),
-            ),
-          ),
-          DataColumn(
-            label: SizedBox(
-              width: sizeScreen.width * 0.10,
-              child: const Text('Cantidad'),
-            ),
-          ),
-          DataColumn(
-            label: SizedBox(
-              width: sizeScreen.width * 0.10,
-              child: const Text('Unidad'),
+              width: sizeScreen.width * 0.25,
+              child: const Text('Artículos'),
             ),
           ),
           DataColumn(
@@ -240,7 +208,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
           ),
           DataColumn(
             label: SizedBox(
-              width: sizeScreen.width * 0.15,
+              width: sizeScreen.width * 0.20,
               child: const Text('Acciones'),
             ),
           ),
@@ -251,13 +219,11 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
             return DataRow(
               cells: [
                 DataCell(Text(r.id.toString())),
-                DataCell(Text(r.empleadoSolicitante.nombre)),
+                DataCell(Text(r.empleadoSolicitante!.nombre)),
                 DataCell(
                   Text(r.fechaSolicitud.toIso8601String().split('T').first),
                 ),
                 DataCell(Text(firstItem?.articulo.descripcion ?? '')),
-                DataCell(Text(firstItem?.cantidad.toString() ?? '')),
-                DataCell(Text(firstItem?.unidadMedida.descripcion ?? '')),
                 DataCell(
                   Chip(
                     shape: StadiumBorder(
@@ -324,9 +290,8 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                               initial?.empleadoSolicitante ??
                                               '',
                                           fechaSolicitud:
-                                              DateTime.tryParse(
-                                                values['fechaSolicitud'] ?? '',
-                                              ) ??
+                                              values['fechaSolicitud']
+                                                  as DateTime? ??
                                               initial?.fechaSolicitud ??
                                               DateTime.now(),
                                           items:
@@ -336,8 +301,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                           estado:
                                               values['estado'] ??
                                               initial?.estado ??
-                                              'Pendiente',
-                                          empleadoId: initial?.empleadoId ?? 0,
+                                              'pendiente',
                                         ),
                                     fields: [
                                       FormFieldDefinition<RequestArticles>(
@@ -348,13 +312,12 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
-                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante: v,
                                               fechaSolicitud:
                                                   r?.fechaSolicitud ??
                                                   DateTime.now(),
                                               items: r?.items ?? [],
-                                              estado: r?.estado ?? 'Pendiente',
+                                              estado: r?.estado ?? 'pendiente',
                                             ),
                                         validator:
                                             (v) =>
@@ -366,21 +329,14 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         key: 'fechaSolicitud',
                                         label: 'Fecha Solicitud',
                                         fieldType: 'date',
-                                        getValue:
-                                            (r) =>
-                                                r?.fechaSolicitud
-                                                    .toIso8601String()
-                                                    .split('T')
-                                                    .first ??
-                                                '',
+                                        getValue: (r) => r?.fechaSolicitud,
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
-                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
                                                   r!.empleadoSolicitante,
                                               fechaSolicitud:
-                                                  DateTime.tryParse(v) ??
+                                                  v as DateTime? ??
                                                   DateTime.now(),
                                               items: r.items,
                                               estado: r.estado,
@@ -413,7 +369,6 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
-                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
                                                   r!.empleadoSolicitante,
                                               fechaSolicitud: r.fechaSolicitud,
@@ -428,7 +383,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                                           : <
                                                             RequestArticleItem
                                                           >[]),
-                                              estado: r?.estado ?? 'Pendiente',
+                                              estado: r?.estado ?? 'pendiente',
                                             ),
                                         validator:
                                             (v) =>
@@ -443,16 +398,15 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                         label: 'Estado',
                                         fieldType: 'dropdown',
                                         options: [
-                                          'Pendiente',
+                                          'pendiente',
                                           'Aprobado',
                                           'Rechazado',
                                         ],
                                         getValue:
-                                            (r) => r?.estado ?? 'Pendiente',
+                                            (r) => r?.estado ?? 'pendiente',
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
-                                              empleadoId: r?.empleadoId ?? 0,
                                               empleadoSolicitante:
                                                   r!.empleadoSolicitante,
                                               fechaSolicitud: r.fechaSolicitud,
@@ -490,7 +444,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                               ),
                             ],
                       ),
-                      if (isCompras && r.estado == 'Pendiente') ...[
+                      if (isCompras && r.estado == 'pendiente') ...[
                         IconButton(
                           icon: Icon(
                             Icons.check_circle,
