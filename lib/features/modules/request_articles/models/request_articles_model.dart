@@ -6,25 +6,24 @@ import '../../unit/models/unit_model.dart';
 
 class RequestArticles {
   final int id;
-  final int empleadoId;
-  final Employee empleadoSolicitante;
+  final Employee? empleadoSolicitante;
   final DateTime fechaSolicitud;
   final List<RequestArticleItem> items;
   final String estado;
+  final bool isActive;
 
   RequestArticles({
     required this.id,
-    required this.empleadoId,
-    required this.empleadoSolicitante,
+    this.empleadoSolicitante,
     required this.fechaSolicitud,
     required this.items,
     required this.estado,
+    this.isActive = true,
   });
 
   factory RequestArticles.fromJson(Map<String, dynamic> json) {
     return RequestArticles(
       id: int.parse(json['id'].toString()),
-      empleadoId: int.parse(json['empleadoId'].toString()),
       empleadoSolicitante: Employee.fromJson(json['empleadoSolicitante']),
       fechaSolicitud: DateTime.parse(json['fechaSolicitud']),
       items:
@@ -34,15 +33,18 @@ class RequestArticles {
               )
               .toList(),
       estado: json['estado'],
+      isActive: json['isActive'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'empleadoId': empleadoId,
+    //  ToDo: Replace with actual employee ID when available
+    // 'empleadoId': empleadoSolicitante.id,
+    'empleadoId': 1,
     'fechaSolicitud': fechaSolicitud.toIso8601String(),
-    'items': items.map((e) => e.toJson()).toList(),
+    // 'items': items.map((e) => e.toJson()).toList(),
     'estado': estado,
+    'isActive': isActive,
   };
 
   factory RequestArticles.fromRawJson(String str) =>

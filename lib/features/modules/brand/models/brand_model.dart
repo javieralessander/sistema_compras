@@ -16,7 +16,7 @@ class Brand {
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'descripcion': descripcion, 'isActive': isActive};
+    return {'descripcion': descripcion, 'isActive': isActive};
   }
 
   // Métodos para trabajar con JSON crudo

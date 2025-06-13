@@ -58,9 +58,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                             id: initial?.id ?? 0,
                             nombre: values['nombre'] ?? initial?.nombre ?? '',
                             isActive:
-                                values['isActive'] ??
-                                initial?.isActive ??
-                                'Activo',
+                                values['isActive'] ?? initial?.isActive ?? true,
                           ),
                       fields: [
                         FormFieldDefinition<Department>(
@@ -83,8 +81,8 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           key: 'estado',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: ['Activo', 'Inactivo'],
-                          getValue: (d) => d?.isActive ?? 'Activo',
+                          options: [true, false],
+                          getValue: (d) => d?.isActive ?? true,
                           applyValue:
                               (d, v) => Department(
                                 id: d?.id ?? 0,
@@ -193,7 +191,7 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                           isActive:
                                               values['isActive'] ??
                                               initial?.isActive ??
-                                              'Activo',
+                                              true,
                                         ),
                                     fields: [
                                       FormFieldDefinition<Department>(
@@ -213,12 +211,12 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                                                     : null,
                                       ),
                                       FormFieldDefinition<Department>(
-                                        key: 'estado',
+                                        key: 'isActive',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
-                                        options: ['Activo', 'Inactivo'],
+                                        options: [true, false],
                                         getValue:
-                                            (dep) => dep?.isActive ?? 'Activo',
+                                            (dep) => dep?.isActive ?? true,
                                         applyValue:
                                             (dep, v) => Department(
                                               id: dep?.id ?? 0,

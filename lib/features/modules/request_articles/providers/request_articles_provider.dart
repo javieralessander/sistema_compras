@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../models/request_articles_model.dart';
@@ -23,7 +25,7 @@ class RequestProvider extends ChangeNotifier {
     return _todos
         .where(
           (r) =>
-              r.empleadoSolicitante.nombre.toLowerCase().contains(_busqueda) ||
+              r.empleadoSolicitante!.nombre.toLowerCase().contains(_busqueda) ||
               r.items.any(
                 (item) =>
                     item.articulo.descripcion.toLowerCase().contains(
@@ -98,6 +100,7 @@ class RequestProvider extends ChangeNotifier {
   }
 
   Future<void> agregarSolicitud(RequestArticles solicitud) async {
+    print(jsonEncode(solicitud.toJson()));
     try {
       final nuevo = await RequestService.create(solicitud);
       _todos.add(nuevo);

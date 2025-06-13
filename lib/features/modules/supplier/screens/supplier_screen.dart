@@ -45,56 +45,67 @@ class _SupplierScreenState extends State<SupplierScreen> {
         onItemsPerPageChanged: provider.cambiarRegistrosPorPagina,
         onSearch: (value) => provider.busqueda = value,
         topRightWidget: FloatingActionButton.extended(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (_) => GenericFormDialog<Supplier>(
-              title: 'Agregar Proveedor',
-              onSubmit: (data) async => provider.agregarProveedor(data),
-              fromValues: (values, initial) => Supplier(
-                id: initial?.id ?? 0,
-                cedulaRnc: values['cedulaRnc'] ?? initial?.cedulaRnc ?? '',
-                nombreComercial: values['nombreComercial'] ?? initial?.nombreComercial ?? '',
-                isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
+          onPressed:
+              () => showDialog(
+                context: context,
+                builder:
+                    (_) => GenericFormDialog<Supplier>(
+                      title: 'Agregar Proveedor',
+                      onSubmit: (data) async => provider.agregarProveedor(data),
+                      fromValues:
+                          (values, initial) => Supplier(
+                            id: initial?.id ?? 0,
+                            cedulaRnc:
+                                values['cedulaRnc'] ?? initial?.cedulaRnc ?? '',
+                            nombreComercial:
+                                values['nombreComercial'] ??
+                                initial?.nombreComercial ??
+                                '',
+                             isActive:
+                                values['isActive'] ?? initial?.isActive ?? true,
+                          ),
+                      fields: [
+                        FormFieldDefinition<Supplier>(
+                          key: 'cedulaRnc',
+                          label: 'Cédula / RNC',
+                          getValue: (s) => s?.cedulaRnc ?? '',
+                          applyValue:
+                              (s, v) => Supplier(
+                                id: s?.id ?? 0,
+                                cedulaRnc: v,
+                                nombreComercial: s?.nombreComercial ?? '',
+                                isActive: s?.isActive ?? true,
+                              ),
+                        ),
+                        FormFieldDefinition<Supplier>(
+                          key: 'nombreComercial',
+                          label: 'Nombre Comercial',
+                          getValue: (s) => s?.nombreComercial ?? '',
+                          applyValue:
+                              (s, v) => Supplier(
+                                id: s?.id ?? 0,
+                                cedulaRnc: s?.cedulaRnc ?? '',
+                                nombreComercial: v,
+                                isActive: s?.isActive ?? true,
+                              ),
+                        ),
+                        FormFieldDefinition<Supplier>(
+                          key: 'estado',
+                          label: 'Estado',
+                          fieldType: 'dropdown',
+                          options: [true, false],
+                          getValue: (s) => s?.isActive ?? true,
+                          applyValue:
+                              (s, v) => Supplier(
+                                id: s?.id ?? 0,
+                                cedulaRnc: s?.cedulaRnc ?? '',
+                                nombreComercial: s?.nombreComercial ?? '',
+                                isActive: v,
+                              ),
+                        ),
+                      ],
+                    ),
               ),
-              fields: [
-                FormFieldDefinition<Supplier>(
-                  key: 'cedulaRnc',
-                  label: 'Cédula / RNC',
-                  getValue: (s) => s?.cedulaRnc ?? '',
-                  applyValue: (s, v) => Supplier(
-                    id: s?.id ?? 0,
-                    cedulaRnc: v,
-                    nombreComercial: s?.nombreComercial ?? '',
-                    isActive: s?.isActive ?? true,
-                  ),
-                ),
-                FormFieldDefinition<Supplier>(
-                  key: 'nombreComercial',
-                  label: 'Nombre Comercial',
-                  getValue: (s) => s?.nombreComercial ?? '',
-                  applyValue: (s, v) => Supplier(
-                    id: s?.id ?? 0,
-                    cedulaRnc: s?.cedulaRnc ?? '',
-                    nombreComercial: v,
-                    isActive: s?.isActive ?? true,
-                  ),
-                ),
-                FormFieldDefinition<Supplier>(
-                  key: 'estado',
-                  label: 'Estado',
-                  fieldType: 'dropdown',
-                  options: ['Activo', 'Inactivo'],
-                  getValue: (s) => s?.isActive ?? 'Activo',
-                  applyValue: (s, v) => Supplier(
-                    id: s?.id ?? 0,
-                    cedulaRnc: s?.cedulaRnc ?? '',
-                    nombreComercial: s?.nombreComercial ?? '',
-                    isActive: v,
-                  ),
-                ),
-              ],
-            ),
-          ),
           icon: const Icon(Icons.add),
           label: const Text('Agregar proveedor'),
           backgroundColor: AppColors.success,
@@ -144,23 +155,26 @@ class _SupplierScreenState extends State<SupplierScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: s.isActive
-                                ? AppColors.success
-                                : AppColors.danger,
+                            color:
+                                s.isActive
+                                    ? AppColors.success
+                                    : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: s.isActive
-                            ? AppColors.success.withOpacity(0.15)
-                            : AppColors.danger.withOpacity(0.15),
+                        backgroundColor:
+                            s.isActive
+                                ? AppColors.success.withOpacity(0.15)
+                                : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.06,
                           child: Text(
                             s.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: s.isActive
-                                  ? AppColors.success
-                                  : AppColors.danger,
+                              color:
+                                  s.isActive
+                                      ? AppColors.success
+                                      : AppColors.danger,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -178,80 +192,101 @@ class _SupplierScreenState extends State<SupplierScreen> {
                           if (value == 'edit') {
                             await showDialog(
                               context: context,
-                              builder: (_) => GenericFormDialog<Supplier>(
-                                title: 'Editar Proveedor',
-                                initialData: s,
-                                onSubmit: (data) async {
-                                  await context.read<SupplierProvider>().actualizarProveedor(data);
-                                },
-                                fromValues: (values, initial) => Supplier(
-                                  id: initial?.id ?? 0,
-                                  cedulaRnc: values['cedulaRnc'] ?? initial?.cedulaRnc ?? '',
-                                  nombreComercial: values['nombreComercial'] ?? initial?.nombreComercial ?? '',
-                                  isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
-                                ),
-                                fields: [
-                                  FormFieldDefinition<Supplier>(
-                                    key: 'cedulaRnc',
-                                    label: 'Cédula / RNC',
-                                    getValue: (s) => s?.cedulaRnc ?? '',
-                                    applyValue: (s, v) => Supplier(
-                                      id: s?.id ?? 0,
-                                      cedulaRnc: v,
-                                      nombreComercial: s?.nombreComercial ?? '',
-                                      isActive: s?.isActive ?? true,
-                                    ),
+                              builder:
+                                  (_) => GenericFormDialog<Supplier>(
+                                    title: 'Editar Proveedor',
+                                    initialData: s,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<SupplierProvider>()
+                                          .actualizarProveedor(data);
+                                    },
+                                    fromValues:
+                                        (values, initial) => Supplier(
+                                          id: initial?.id ?? 0,
+                                          cedulaRnc:
+                                              values['cedulaRnc'] ??
+                                              initial?.cedulaRnc ??
+                                              '',
+                                          nombreComercial:
+                                              values['nombreComercial'] ??
+                                              initial?.nombreComercial ??
+                                              '',
+                                          isActive:
+                                              values['isActive'] ??
+                                              initial?.isActive,
+                                        ),
+                                    fields: [
+                                      FormFieldDefinition<Supplier>(
+                                        key: 'cedulaRnc',
+                                        label: 'Cédula / RNC',
+                                        getValue: (s) => s?.cedulaRnc ?? '',
+                                        applyValue:
+                                            (s, v) => Supplier(
+                                              id: s?.id ?? 0,
+                                              cedulaRnc: v,
+                                              nombreComercial:
+                                                  s?.nombreComercial ?? '',
+                                              isActive: s?.isActive ?? true,
+                                            ),
+                                      ),
+                                      FormFieldDefinition<Supplier>(
+                                        key: 'nombreComercial',
+                                        label: 'Nombre Comercial',
+                                        getValue:
+                                            (s) => s?.nombreComercial ?? '',
+                                        applyValue:
+                                            (s, v) => Supplier(
+                                              id: s?.id ?? 0,
+                                              cedulaRnc: s?.cedulaRnc ?? '',
+                                              nombreComercial: v,
+                                              isActive: s?.isActive ?? true,
+                                            ),
+                                      ),
+                                      FormFieldDefinition<Supplier>(
+                                        key: 'isActive',
+                                        label: 'Is Active',
+                                        fieldType: 'dropdown',
+                                        options: [true, false],
+                                        getValue: (s) => s?.isActive ?? true,
+                                        applyValue:
+                                            (s, v) => Supplier(
+                                              id: s?.id ?? 0,
+                                              cedulaRnc: s?.cedulaRnc ?? '',
+                                              nombreComercial:
+                                                  s?.nombreComercial ?? '',
+                                              isActive: v,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                  FormFieldDefinition<Supplier>(
-                                    key: 'nombreComercial',
-                                    label: 'Nombre Comercial',
-                                    getValue: (s) => s?.nombreComercial ?? '',
-                                    applyValue: (s, v) => Supplier(
-                                      id: s?.id ?? 0,
-                                      cedulaRnc: s?.cedulaRnc ?? '',
-                                      nombreComercial: v,
-                                      isActive: s?.isActive ?? true,
-                                    ),
-                                  ),
-                                  FormFieldDefinition<Supplier>(
-                                    key: 'estado',
-                                    label: 'Estado',
-                                    fieldType: 'dropdown',
-                                    options: ['Activo', 'Inactivo'],
-                                    getValue: (s) => s?.isActive ?? 'Activo',
-                                    applyValue: (s, v) => Supplier(
-                                      id: s?.id ?? 0,
-                                      cedulaRnc: s?.cedulaRnc ?? '',
-                                      nombreComercial: s?.nombreComercial ?? '',
-                                      isActive: v,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             );
                           } else if (value == 'delete') {
-                            context.read<SupplierProvider>().eliminarProveedor(s.id);
+                            context.read<SupplierProvider>().eliminarProveedor(
+                              s.id,
+                            );
                           }
                         },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: Icon(Icons.edit, color: Colors.blue),
-                              title: Text('Editar'),
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                        itemBuilder:
+                            (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
                               ),
-                              title: Text('Eliminar'),
-                            ),
-                          ),
-                        ],
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('Eliminar'),
+                                ),
+                              ),
+                            ],
                       ),
                     ),
                   ],

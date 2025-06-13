@@ -45,43 +45,56 @@ class _BrandScreenState extends State<BrandScreen> {
         onItemsPerPageChanged: provider.cambiarRegistrosPorPagina,
         onSearch: (value) => provider.busqueda = value,
         topRightWidget: FloatingActionButton.extended(
-          onPressed: () => showDialog(
-            context: context,
-            builder: (_) => GenericFormDialog<Brand>(
-              title: 'Agregar Marca',
-              onSubmit: (data) async => provider.agregarMarca(data),
-              fromValues: (values, initial) => Brand(
-                id: initial?.id ?? 0,
-                descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
+          onPressed:
+              () => showDialog(
+                context: context,
+                builder:
+                    (_) => GenericFormDialog<Brand>(
+                      title: 'Agregar Marca',
+                      onSubmit: (data) async => provider.agregarMarca(data),
+                      fromValues:
+                          (values, initial) => Brand(
+                            id: initial?.id ?? 0,
+                            descripcion:
+                                values['descripcion'] ??
+                                initial?.descripcion ??
+                                '',
+                            isActive:
+                                values['isActive'] ?? initial?.isActive ?? true,
+                          ),
+                      fields: [
+                        FormFieldDefinition<Brand>(
+                          key: 'descripcion',
+                          label: 'Descripción',
+                          getValue: (b) => b?.descripcion ?? '',
+                          applyValue:
+                              (b, v) => Brand(
+                                id: b?.id ?? 0,
+                                descripcion: v,
+                                isActive: b?.isActive ?? true,
+                              ),
+                          validator:
+                              (v) =>
+                                  (v == null || v.isEmpty)
+                                      ? 'Campo requerido'
+                                      : null,
+                        ),
+                        FormFieldDefinition<Brand>(
+                          key: 'estado',
+                          label: 'Estado',
+                          fieldType: 'dropdown',
+                          options: [true, false],
+                          getValue: (b) => b?.isActive ?? true,
+                          applyValue:
+                              (b, v) => Brand(
+                                id: b?.id ?? 0,
+                                descripcion: b?.descripcion ?? '',
+                                isActive: v,
+                              ),
+                        ),
+                      ],
+                    ),
               ),
-              fields: [
-                FormFieldDefinition<Brand>(
-                  key: 'descripcion',
-                  label: 'Descripción',
-                  getValue: (b) => b?.descripcion ?? '',
-                  applyValue: (b, v) => Brand(
-                    id: b?.id ?? 0,
-                    descripcion: v,
-                    isActive: b?.isActive ?? true,
-                  ),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
-                ),
-                FormFieldDefinition<Brand>(
-                  key: 'estado',
-                  label: 'Estado',
-                  fieldType: 'dropdown',
-                  options: ['Activo', 'Inactivo'],
-                  getValue: (b) => b?.isActive ?? 'Activo',
-                  applyValue: (b, v) => Brand(
-                    id: b?.id ?? 0,
-                    descripcion: b?.descripcion ?? '',
-                    isActive: v,
-                  ),
-                ),
-              ],
-            ),
-          ),
           icon: const Icon(Icons.add),
           label: const Text('Agregar marca'),
           backgroundColor: AppColors.success,
@@ -124,23 +137,26 @@ class _BrandScreenState extends State<BrandScreen> {
                       Chip(
                         shape: StadiumBorder(
                           side: BorderSide(
-                            color: b.isActive
-                                ? AppColors.success
-                                : AppColors.danger,
+                            color:
+                                b.isActive
+                                    ? AppColors.success
+                                    : AppColors.danger,
                           ),
                         ),
-                        backgroundColor: b.isActive
-                            ? AppColors.success.withOpacity(0.15)
-                            : AppColors.danger.withOpacity(0.15),
+                        backgroundColor:
+                            b.isActive
+                                ? AppColors.success.withOpacity(0.15)
+                                : AppColors.danger.withOpacity(0.15),
                         label: SizedBox(
                           width: sizeScreen.width * 0.04,
                           child: Text(
                             b.isActive ? 'Activo' : 'Inactivo',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: b.isActive
-                                  ? AppColors.success
-                                  : AppColors.danger,
+                              color:
+                                  b.isActive
+                                      ? AppColors.success
+                                      : AppColors.danger,
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                             ),
@@ -158,67 +174,84 @@ class _BrandScreenState extends State<BrandScreen> {
                           if (value == 'edit') {
                             await showDialog(
                               context: context,
-                              builder: (_) => GenericFormDialog<Brand>(
-                                title: 'Editar Marca',
-                                initialData: b,
-                                onSubmit: (data) async {
-                                  await context.read<BrandProvider>().actualizarMarca(data);
-                                },
-                                fromValues: (values, initial) => Brand(
-                                  id: initial?.id ?? 0,
-                                  descripcion: values['descripcion'] ?? initial?.descripcion ?? '',
-                                  isActive: values['isActive'] ?? initial?.isActive ?? 'Activo',
-                                ),
-                                fields: [
-                                  FormFieldDefinition<Brand>(
-                                    key: 'descripcion',
-                                    label: 'Descripción',
-                                    getValue: (b) => b?.descripcion ?? '',
-                                    applyValue: (b, v) => Brand(
-                                      id: b?.id ?? 0,
-                                      descripcion: v,
-                                      isActive: b?.isActive ?? true,
-                                    ),
-                                    validator: (v) => (v == null || v.isEmpty) ? 'Campo requerido' : null,
+                              builder:
+                                  (_) => GenericFormDialog<Brand>(
+                                    title: 'Editar Marca',
+                                    initialData: b,
+                                    onSubmit: (data) async {
+                                      await context
+                                          .read<BrandProvider>()
+                                          .actualizarMarca(data);
+                                    },
+                                    fromValues:
+                                        (values, initial) => Brand(
+                                          id: initial?.id ?? 0,
+                                          descripcion:
+                                              values['descripcion'] ??
+                                              initial?.descripcion ??
+                                              '',
+                                          isActive:
+                                              values['isActive'] ??
+                                              initial?.isActive ??
+                                              'Activo',
+                                        ),
+                                    fields: [
+                                      FormFieldDefinition<Brand>(
+                                        key: 'descripcion',
+                                        label: 'Descripción',
+                                        getValue: (b) => b?.descripcion ?? '',
+                                        applyValue:
+                                            (b, v) => Brand(
+                                              id: b?.id ?? 0,
+                                              descripcion: v,
+                                              isActive: b?.isActive ?? true,
+                                            ),
+                                        validator:
+                                            (v) =>
+                                                (v == null || v.isEmpty)
+                                                    ? 'Campo requerido'
+                                                    : null,
+                                      ),
+                                      FormFieldDefinition<Brand>(
+                                        key: 'isActive',
+                                        label: 'Estado',
+                                        fieldType: 'dropdown',
+                                        options: [true, false],
+                                        getValue: (b) => b?.isActive ?? true,
+                                        applyValue:
+                                            (b, v) => Brand(
+                                              id: b?.id ?? 0,
+                                              descripcion: b?.descripcion ?? '',
+                                              isActive: v,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                  FormFieldDefinition<Brand>(
-                                    key: 'isActive',
-                                    label: 'Estado',
-                                    fieldType: 'dropdown',
-                                    options: ['Activo', 'Inactivo'],
-                                    getValue: (b) => b?.isActive ?? 'Activo',
-                                    applyValue: (b, v) => Brand(
-                                      id: b?.id ?? 0,
-                                      descripcion: b?.descripcion ?? '',
-                                      isActive: v,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             );
                           } else if (value == 'delete') {
                             context.read<BrandProvider>().eliminarMarca(b.id);
                           }
                         },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: ListTile(
-                              leading: Icon(Icons.edit, color: Colors.blue),
-                              title: Text('Editar'),
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                        itemBuilder:
+                            (context) => [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: ListTile(
+                                  leading: Icon(Icons.edit, color: Colors.blue),
+                                  title: Text('Editar'),
+                                ),
                               ),
-                              title: Text('Eliminar'),
-                            ),
-                          ),
-                        ],
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  title: Text('Eliminar'),
+                                ),
+                              ),
+                            ],
                       ),
                     ),
                   ],

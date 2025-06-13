@@ -75,9 +75,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                 initial?.existencia ??
                                 0,
                             isActive:
-                                values['isActive'] ??
-                                initial?.isActive ??
-                                'Activo',
+                                values['isActive'] ?? initial?.isActive ?? true,
                           ),
                       fields: [
                         FormFieldDefinition<Article>(
@@ -161,8 +159,8 @@ class _ArticleScreenState extends State<ArticleScreen> {
                           key: 'isActive',
                           label: 'isActive',
                           fieldType: 'dropdown',
-                          options: ['Activo', 'Inactivo'],
-                          getValue: (a) => a?.isActive ?? 'Activo',
+                          options: [true, false],
+                          getValue: (a) => a?.isActive ?? true,
                           applyValue:
                               (a, v) => Article(
                                 id: a?.id ?? 0,
@@ -312,7 +310,7 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                           isActive:
                                               values['isActive'] ??
                                               initial?.isActive ??
-                                              'Activo',
+                                              true,
                                         ),
                                     fields: [
                                       FormFieldDefinition<Article>(
@@ -405,12 +403,11 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                                     : null,
                                       ),
                                       FormFieldDefinition<Article>(
-                                        key: 'estado',
+                                        key: 'isActive',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
-                                        options: ['Activo', 'Inactivo'],
-                                        getValue:
-                                            (a) => a?.isActive ?? 'Activo',
+                                        options: [true, false],
+                                        getValue: (a) => a?.isActive,
                                         applyValue:
                                             (a, v) => Article(
                                               id: a?.id ?? 0,

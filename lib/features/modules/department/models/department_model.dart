@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+
 class Department {
   final int id;
   final String nombre;
   final bool isActive;
 
-  Department({required this.id, required this.nombre,  this.isActive = true});
+  Department({required this.id, required this.nombre, this.isActive = true});
 
   factory Department.fromJson(Map<String, dynamic> json) {
     return Department(
@@ -16,7 +17,7 @@ class Department {
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'nombre': nombre, 'isActive': isActive};
+    return {'nombre': nombre, 'isActive': isActive};
   }
 
   // Métodos para trabajar con JSON crudo
@@ -47,7 +48,6 @@ class Department {
   int get hashCode => id.hashCode;
 }
 
-
 // Enum for department icons, each with an associated CupertinoIconData
 enum DepartmentIcon {
   defaultIcon(CupertinoIcons.building_2_fill),
@@ -65,7 +65,7 @@ enum DepartmentIcon {
   operationsIcon(CupertinoIcons.gear_alt_fill),
   customerServiceIcon(CupertinoIcons.chat_bubble_2_fill),
   qualityAssuranceIcon(CupertinoIcons.checkmark_shield_fill),
-  trainingIcon(CupertinoIcons.book_fill),;
+  trainingIcon(CupertinoIcons.book_fill);
 
   final IconData iconData;
   // Mark the constructor as const to allow constant expressions
