@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sistema_compras/features/modules/article/screens/article_screen.dart';
+import 'package:sistema_compras/features/modules/purchase%20_order/screens/purchase%20_order_screen.dart';
+import 'package:sistema_compras/features/modules/request_articles/screens/request_articles_screen.dart';
+import 'package:sistema_compras/features/modules/supplier/screens/supplier_screen.dart';
 import '../../../core/config/app_theme.dart';
 import '../../../shared/widgets/generic_appbar.dart';
 import '../widgets/bar_chart_sample7.dart';
@@ -171,22 +176,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       ElevatedButton.icon(
                         icon: const Icon(Icons.add_shopping_cart),
                         label: const Text('Nueva Compra'),
-                        onPressed: () {},
+                        onPressed: () {
+                          context.pushReplacementNamed(PurchaseOrderScreen.name);
+                        },
                       ),
                       ElevatedButton.icon(
                         icon: const Icon(Icons.point_of_sale),
-                        label: const Text('Nueva Venta'),
-                        onPressed: () {},
+                        label: const Text('Nueva Solicitud'),
+                        onPressed: () {
+                          context.pushReplacementNamed(RequestArticlesScreen.name);
+                        },
                       ),
                       ElevatedButton.icon(
                         icon: const Icon(Icons.inventory),
                         label: const Text('Nuevo Producto'),
-                        onPressed: () {},
+                        onPressed: () {
+                            context.pushReplacementNamed(ArticleScreen.name);
+                        },
                       ),
                       ElevatedButton.icon(
                         icon: const Icon(Icons.people),
                         label: const Text('Proveedores'),
-                        onPressed: () {},
+                        onPressed: () {
+                          context.pushReplacementNamed(SupplierScreen.name);
+                        },
                       ),
                     ],
                   ),

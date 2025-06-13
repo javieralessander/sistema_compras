@@ -28,10 +28,9 @@ class Employee {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'cedula': cedula,
       'nombre': nombre,
-      'departamento': departamento.toJson(),
+      'departamentoId': departamento.id,
       'isActive': isActive,
     };
   }

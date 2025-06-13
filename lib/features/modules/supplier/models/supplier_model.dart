@@ -24,7 +24,6 @@ class Supplier {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'cedulaRnc': cedulaRnc,
       'nombreComercial': nombreComercial,
       'isActive': isActive,

@@ -73,9 +73,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           nombre: values['nombre'] ?? initial?.nombre ?? '',
                           departamento: matchedDepartment,
                           isActive:
-                              values['isActive'] ??
-                              initial?.isActive ??
-                              'Activo',
+                                values['isActive'] ?? initial?.isActive ?? true,
                         );
                       },
                       fields: [
@@ -279,7 +277,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                         isActive:
                                             values['isActive'] ??
                                             initial?.isActive ??
-                                            'isActive',
+                                            true,
                                       );
                                     },
                                     fields: [
@@ -341,12 +339,12 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                         display: (d) => d.nombre,
                                       ),
                                       FormFieldDefinition<Employee>(
-                                        key: 'estado',
+                                        key: 'isActive',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
-                                        options: ['Activo', 'Inactivo'],
+                                        options: [true, false],
                                         getValue:
-                                            (e) => e?.isActive ?? 'Activo',
+                                            (e) => e?.isActive ?? true,
                                         applyValue:
                                             (e, v) => Employee(
                                               id: e?.id ?? 0,

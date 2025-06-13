@@ -60,12 +60,7 @@ class _UnitScreenState extends State<UnitScreen> {
                                 initial?.descripcion ??
                                 '',
                             isActive:
-                                (values['estado'] ??
-                                            initial?.isActive ??
-                                            true) ==
-                                        'Activo'
-                                    ? true
-                                    : false,
+                                values['isActive'] ?? initial?.isActive ?? true,
                           ),
                       fields: [
                         FormFieldDefinition<Unit>(
@@ -83,7 +78,7 @@ class _UnitScreenState extends State<UnitScreen> {
                           key: 'isActive',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: ['Activo', 'Inactivo'],
+                          options: [true, false],
                           getValue: (u) => u?.isActive ?? true,
                           applyValue:
                               (u, v) => Unit(
@@ -193,7 +188,7 @@ class _UnitScreenState extends State<UnitScreen> {
                                           isActive:
                                               values['isActive'] ??
                                               initial?.isActive ??
-                                              'Activo',
+                                              true,
                                         ),
                                     fields: [
                                       FormFieldDefinition<Unit>(
