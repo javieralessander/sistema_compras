@@ -1,16 +1,41 @@
-# sistema_compras
+# Sistema Compras
 
-A new Flutter project.
+Bienvenido al proyecto **Sistema Compras**, una aplicación desarrollada en Flutter para gestionar compras de manera eficiente.
 
-## Getting Started
+## Descripción
 
-This project is a starting point for a Flutter application.
+Este proyecto sirve como punto de partida para una aplicación Flutter enfocada en la gestión de compras. Incluye una estructura básica y recursos útiles para comenzar el desarrollo.
 
-A few resources to get you started if this is your first Flutter project:
+## Requisitos Previos
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Flutter](https://flutter.dev/docs/get-started/install) instalado en tu sistema
+- Un editor de código como [Visual Studio Code](https://code.visualstudio.com/) o [Android Studio](https://developer.android.com/studio)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Instalación
+
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/tu_usuario/sistema_compras.git
+   ```
+2. Navega al directorio del proyecto:
+   ```bash
+   cd sistema_compras
+   ```
+3. Instala las dependencias:
+   ```bash
+   flutter pub get
+   ```
+4. Ejecuta la aplicación:
+   ```bash
+   flutter run
+   ```
+
+## Recursos Útiles
+
+- [Laboratorio: Escribe tu primera app Flutter](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Ejemplos útiles de Flutter](https://docs.flutter.dev/cookbook)
+- [Documentación oficial de Flutter](https://docs.flutter.dev/)
+
+## Contribuciones
+
+¡Las contribuciones son bienvenidas! Por favor, abre un _issue_ o envía un _pull request_ para sugerencias y mejoras.
