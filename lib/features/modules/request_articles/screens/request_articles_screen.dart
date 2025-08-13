@@ -5,11 +5,16 @@ import '../../../../shared/widgets/generic_appbar.dart';
 import '../../../../shared/widgets/generic_data_table.dart';
 import '../../../../shared/widgets/generic_form_dialog.dart';
 import '../../../../shared/widgets/multi_article_form_field.dart';
+import '../../../../shared/widgets/status_widget.dart';
 import '../../article/models/article_model.dart';
 import '../../article/providers/article_provider.dart';
 import '../../unit/providers/unit_provider.dart';
 import '../models/request_articles_model.dart';
 import '../providers/request_articles_provider.dart';
+import '../widgets/request_articles_detail_dialog.dart';
+import '../../employee/models/employee_model.dart';
+import '../../employee/providers/employee_provider.dart';
+import '../../department/models/department_model.dart';
 
 class RequestArticlesScreen extends StatefulWidget {
   static const String name = 'request_articles';
@@ -33,6 +38,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
     final provider = context.watch<RequestProvider>();
     final articleOptions = context.watch<ArticleProvider>().articulos;
     final unitOptions = context.watch<UnitProvider>().unidades;
+    final employeeOptions = context.watch<EmployeeProvider>().empleados;
     //  final isCompras = context.watch<UserProvider>().isCompras;
     final isCompras = true;
 
@@ -73,100 +79,71 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                 builder:
                     (_) => GenericFormDialog<RequestArticles>(
                       title: 'Agregar Solicitud',
-                      onSubmit: (data) async => provider.agregarSolicitud(data),
+                      dialogWidthFactor: 0.85, // 85% del ancho de pantalla
+                      dialogHeightFactor: 0.85, // 85% del alto de pantalla
+                      maxWidth: 1200, // Ancho máximo de 1200px
+                      onSubmit: (data) async {
+                        // Eliminar prints innecesarios
+                        return provider.agregarSolicitud(data);
+                      },
                       fromValues:
                           (values, initial) => RequestArticles(
+                            empleadoSolicitante: values['empleadoSolicitante'] as Employee? ?? 
+                                Employee(
+                                  id: 1, 
+                                  cedula: '00000000',
+                                  nombre: 'Usuario Temporal', 
+                                  departamento: Department(
+                                    id: 1,
+                                    nombre: 'Temporal',
+                                    isActive: true,
+                                  ),
+                                  isActive: true,
+                                ),
                             id: initial?.id ?? 0,
-                            fechaSolicitud:
-                                values['fechaSolicitud'] as DateTime? ??
-                                initial?.fechaSolicitud ??
-                                DateTime.now(),
+                            fechaSolicitud: DateTime.now(), // Siempre usar fecha actual
                             items: values['items'] ?? initial?.items ?? [],
-                            estado:
-                                values['estado'] ??
-                                initial?.estado ??
-                                'pendiente',
+                            estado: initial?.estado ?? RequestArticles.ESTADO_PENDIENTE, // Siempre pendiente para nuevas
                           ),
                       fields: [
-                        // FormFieldDefinition<RequestArticles>(
-                        //   key: 'empleadoSolicitante',
-                        //   label: 'Empleado Solicitante',
-                        //   getValue: (r) => r?.empleadoSolicitante ?? '',
-                        //   applyValue:
-                        //       (r, v) => RequestArticles(
-                        //         id: r?.id ?? 0,
-                        //         empleadoSolicitante: v,
-                        //         fechaSolicitud:
-                        //             r?.fechaSolicitud ?? DateTime.now(),
-                        //         items: r?.items ?? [],
-                        //         estado: r?.estado ?? 'pendiente',
-                        //       ),
-                        //   validator:
-                        //       (v) =>
-                        //           (v == null || v.isEmpty)
-                        //               ? 'Campo requerido'
-                        //               : null,
-                        // ),
                         FormFieldDefinition<RequestArticles>(
-                          key: 'fechaSolicitud',
-                          label: 'Fecha Solicitud',
-                          fieldType: 'date',
-                          getValue: (r) => r?.fechaSolicitud,
+                          key: 'items',
+                          label: 'Artículos solicitados',
+                          fieldType: 'custom',
+                          builder: (context, controller, initial) {
+                            return MultiArticleFormField(
+                              initialItems: initial?.items ?? [],
+                              articleOptions: articleOptions,
+                              unitOptions: unitOptions,
+                              onChanged: (items) {
+                                controller.setValue(items);
+                              },
+                            );
+                          },
+                          getValue: (r) => r?.items ?? [],
                           applyValue:
                               (r, v) => RequestArticles(
                                 id: r?.id ?? 0,
                                 empleadoSolicitante: r!.empleadoSolicitante,
-                                fechaSolicitud:
-                                    v as DateTime? ?? DateTime.now(),
-                                items: r.items,
+                                fechaSolicitud: r.fechaSolicitud,
+                                items: v as List<RequestArticleItem>,
                                 estado: r.estado,
                               ),
+                          validator:
+                              (v) {
+                                if (v == null || (v is List && v.isEmpty)) {
+                                  return 'Debe agregar al menos un artículo';
+                                }
+                                if (v is List<RequestArticleItem>) {
+                                  for (var item in v) {
+                                    if (item.articulo.id == 0) {
+                                      return 'Todos los artículos deben estar seleccionados';
+                                    }
+                                  }
+                                }
+                                return null;
+                              },
                         ),
-                        // Campo personalizado para varios artículos
-                        // FormFieldDefinition<RequestArticles>(
-                        //   key: 'items',
-                        //   label: 'Artículos solicitados',
-                        //   fieldType: 'custom',
-                        //   builder: (context, controller, initial) {
-                        //     return MultiArticleFormField(
-                        //       initialItems: initial?.items ?? [],
-                        //       articleOptions: articleOptions,
-                        //       unitOptions: unitOptions,
-                        //       onChanged: (items) {
-                        //         controller.setValue(items);
-                        //       },
-                        //     );
-                        //   },
-                        //   getValue: (r) => r?.items ?? [],
-                        //   applyValue:
-                        //       (r, v) => RequestArticles(
-                        //         id: r?.id ?? 0,
-                        //         empleadoSolicitante: r!.empleadoSolicitante,
-                        //         fechaSolicitud: r.fechaSolicitud,
-                        //         items: v as List<RequestArticleItem>,
-                        //         estado: r.estado,
-                        //       ),
-                        //   validator:
-                        //       (v) =>
-                        //           (v == null || (v is List && v.isEmpty))
-                        //               ? 'Debe agregar al menos un artículo'
-                        //               : null,
-                        // ),
-                        // FormFieldDefinition<RequestArticles>(
-                        //   key: 'estado',
-                        //   label: 'Estado',
-                        //   fieldType: 'dropdown',
-                        //   options: ['pendiente', 'aprobada', 'anulada'],
-                        //   getValue: (r) => r?.estado ?? 'pendiente',
-                        //   applyValue:
-                        //       (r, v) => RequestArticles(
-                        //         id: r?.id ?? 0,
-                        //         empleadoSolicitante: r!.empleadoSolicitante,
-                        //         fechaSolicitud: r.fechaSolicitud,
-                        //         items: r.items,
-                        //         estado: v,
-                        //       ),
-                        // ),
                       ],
                     ),
               ),
@@ -215,55 +192,58 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
         ],
         rowBuilder: (items) {
           return items.map((r) {
-            final firstItem = r.items.isNotEmpty ? r.items.first : null;
+            // Concatenar todos los artículos de la solicitud
+            final articulosTexto = r.items.isNotEmpty 
+                ? r.items.map((item) => 
+                    '${item.articulo.descripcion} (${item.cantidad})'
+                  ).join(', ')
+                : 'Sin artículos';
+            
             return DataRow(
               cells: [
                 DataCell(Text(r.id.toString())),
-                DataCell(Text(r.empleadoSolicitante!.nombre)),
+                DataCell(Text(r.empleadoSolicitante.nombre)),
                 DataCell(
                   Text(r.fechaSolicitud.toIso8601String().split('T').first),
                 ),
-                DataCell(Text(firstItem?.articulo.descripcion ?? '')),
                 DataCell(
-                  Chip(
-                    shape: StadiumBorder(
-                      side: BorderSide(
-                        color:
-                            r.estado == 'Aprobado'
-                                ? AppColors.success
-                                : r.estado == 'Rechazado'
-                                ? AppColors.danger
-                                : AppColors.warning,
-                      ),
-                    ),
-                    backgroundColor:
-                        r.estado == 'Aprobado'
-                            ? AppColors.success.withOpacity(0.15)
-                            : r.estado == 'Rechazado'
-                            ? AppColors.danger.withOpacity(0.15)
-                            : AppColors.warning.withOpacity(0.15),
-                    label: SizedBox(
-                      width: sizeScreen.width * 0.06,
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.25,
+                    child: Tooltip(
+                      message: articulosTexto,
                       child: Text(
-                        r.estado,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color:
-                              r.estado == 'Aprobado'
-                                  ? AppColors.success
-                                  : r.estado == 'Rechazado'
-                                  ? AppColors.danger
-                                  : AppColors.warning,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
+                        articulosTexto,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
                     ),
                   ),
                 ),
                 DataCell(
+                  StatusChip.request(
+                    r.estado,
+                    width: sizeScreen.width * 0.06,
+                  ),
+                ),
+                DataCell(
                   Row(
                     children: [
+                      // Botón para ver detalles (siempre disponible)
+                      IconButton(
+                        icon: Icon(
+                          Icons.visibility,
+                          color: AppColors.info,
+                        ),
+                        tooltip: 'Ver detalles',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => RequestArticlesDetailDialog(solicitud: r),
+                          );
+                        },
+                      ),
+                      
+                      // PopupMenuButton con restricciones para solicitudes aprobadas
                       PopupMenuButton<String>(
                         icon: const Icon(
                           Icons.more_vert,
@@ -276,6 +256,9 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                               builder:
                                   (_) => GenericFormDialog<RequestArticles>(
                                     title: 'Editar Solicitud',
+                                    dialogWidthFactor: 0.85, // 85% del ancho de pantalla
+                                    dialogHeightFactor: 0.85, // 85% del alto de pantalla
+                                    maxWidth: 1200, // Ancho máximo de 1200px
                                     initialData: r,
                                     onSubmit: (data) async {
                                       await context
@@ -287,8 +270,7 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                           id: initial?.id ?? 0,
                                           empleadoSolicitante:
                                               values['empleadoSolicitante'] ??
-                                              initial?.empleadoSolicitante ??
-                                              '',
+                                              initial?.empleadoSolicitante,
                                           fechaSolicitud:
                                               values['fechaSolicitud']
                                                   as DateTime? ??
@@ -301,14 +283,16 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                           estado:
                                               values['estado'] ??
                                               initial?.estado ??
-                                              'pendiente',
+                                              RequestArticles.ESTADO_PENDIENTE,
                                         ),
                                     fields: [
                                       FormFieldDefinition<RequestArticles>(
                                         key: 'empleadoSolicitante',
                                         label: 'Empleado Solicitante',
+                                        fieldType: 'dropdown',
+                                        options: employeeOptions,
                                         getValue:
-                                            (r) => r?.empleadoSolicitante ?? '',
+                                            (r) => r?.empleadoSolicitante,
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
@@ -317,13 +301,14 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                                   r?.fechaSolicitud ??
                                                   DateTime.now(),
                                               items: r?.items ?? [],
-                                              estado: r?.estado ?? 'pendiente',
+                                              estado: r?.estado ?? RequestArticles.ESTADO_PENDIENTE,
                                             ),
                                         validator:
                                             (v) =>
-                                                (v == null || v.isEmpty)
+                                                (v == null)
                                                     ? 'Campo requerido'
                                                     : null,
+                                        display: (e) => (e as Employee).nombre,
                                       ),
                                       FormFieldDefinition<RequestArticles>(
                                         key: 'fechaSolicitud',
@@ -383,27 +368,34 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                                           : <
                                                             RequestArticleItem
                                                           >[]),
-                                              estado: r?.estado ?? 'pendiente',
+                                              estado: r.estado,
                                             ),
                                         validator:
-                                            (v) =>
-                                                (v == null ||
-                                                        (v is List &&
-                                                            v.isEmpty))
-                                                    ? 'Debe agregar al menos un artículo'
-                                                    : null,
+                                            (v) {
+                                              if (v == null || (v is List && v.isEmpty)) {
+                                                return 'Debe agregar al menos un artículo';
+                                              }
+                                              if (v is List<RequestArticleItem>) {
+                                                for (var item in v) {
+                                                  if (item.articulo.id == 0) {
+                                                    return 'Todos los artículos deben estar seleccionados';
+                                                  }
+                                                }
+                                              }
+                                              return null;
+                                            },
                                       ),
                                       FormFieldDefinition<RequestArticles>(
                                         key: 'estado',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
                                         options: [
-                                          'pendiente',
-                                          'Aprobado',
-                                          'Rechazado',
+                                          {'value': 'PENDIENTE', 'label': 'Pendiente'},
+                                          {'value': 'APROBADA', 'label': 'Aprobada'},
+                                          {'value': 'RECHAZADA', 'label': 'Rechazada'},
                                         ],
                                         getValue:
-                                            (r) => r?.estado ?? 'pendiente',
+                                            (r) => r?.estado.toUpperCase() ?? 'PENDIENTE',
                                         applyValue:
                                             (r, v) => RequestArticles(
                                               id: r?.id ?? 0,
@@ -418,33 +410,75 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                                   ),
                             );
                           } else if (value == 'delete') {
-                            context.read<RequestProvider>().eliminarSolicitud(
-                              r.id,
+                            // Confirmar eliminación
+                            bool? confirmar = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirmar eliminación'),
+                                content: Text('¿Está seguro de que desea eliminar la solicitud #${r.id}?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    style: TextButton.styleFrom(foregroundColor: Colors.red),
+                                    child: const Text('Eliminar'),
+                                  ),
+                                ],
+                              ),
                             );
+                            
+                            if (confirmar == true) {
+                              context.read<RequestProvider>().eliminarSolicitud(r.id);
+                            }
                           }
                         },
-                        itemBuilder:
-                            (context) => [
-                              const PopupMenuItem(
+                        itemBuilder: (context) {
+                          List<PopupMenuEntry<String>> items = [];
+                          
+                          // Solo permitir editar y eliminar si NO está aprobada
+                          if (r.estado.toUpperCase() != RequestArticles.ESTADO_APROBADA) {
+                            items.addAll([
+                              PopupMenuItem(
                                 value: 'edit',
                                 child: ListTile(
                                   leading: Icon(Icons.edit, color: Colors.blue),
                                   title: Text('Editar'),
                                 ),
                               ),
-                              const PopupMenuItem(
+                              PopupMenuItem(
                                 value: 'delete',
                                 child: ListTile(
-                                  leading: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
+                                  leading: Icon(Icons.delete, color: Colors.red),
                                   title: Text('Eliminar'),
                                 ),
                               ),
-                            ],
+                            ]);
+                          } else {
+                            // Si está aprobada, mostrar mensaje informativo
+                            items.add(
+                              PopupMenuItem(
+                                enabled: false,
+                                child: ListTile(
+                                  leading: Icon(Icons.info, color: AppColors.info),
+                                  title: Text(
+                                    'Solicitud aprobada\n(no editable)',
+                                    style: TextStyle(
+                                      color: AppColors.gray,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          
+                          return items;
+                        },
                       ),
-                      if (isCompras && r.estado == 'pendiente') ...[
+                      if (isCompras && r.estado.toUpperCase() == RequestArticles.ESTADO_PENDIENTE) ...[
                         IconButton(
                           icon: Icon(
                             Icons.check_circle,
@@ -452,14 +486,45 @@ class _RequestArticlesScreenState extends State<RequestArticlesScreen> {
                           ),
                           tooltip: 'Aprobar',
                           onPressed: () async {
-                            await provider.aprobarSolicitud(r.id);
+                            try {
+                              await provider.aprobarSolicitud(r.id);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Solicitud aprobada y orden de compra creada exitosamente'),
+                                  backgroundColor: AppColors.success,
+                                  duration: Duration(seconds: 4),
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error al aprobar solicitud: $e'),
+                                  backgroundColor: AppColors.danger,
+                                ),
+                              );
+                            }
                           },
                         ),
                         IconButton(
                           icon: Icon(Icons.cancel, color: AppColors.danger),
                           tooltip: 'Anular',
                           onPressed: () async {
-                            await provider.anularSolicitud(r.id);
+                            try {
+                              await provider.anularSolicitud(r.id);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Solicitud rechazada exitosamente'),
+                                  backgroundColor: AppColors.warning,
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Error al rechazar solicitud: $e'),
+                                  backgroundColor: AppColors.danger,
+                                ),
+                              );
+                            }
                           },
                         ),
                       ],

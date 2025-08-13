@@ -135,8 +135,11 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                           key: 'estado',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: ['Activo', 'Inactivo'],
-                          getValue: (e) => e?.isActive ?? 'Activo',
+                          options: [
+                            {'value': true, 'label': 'Activo'},
+                            {'value': false, 'label': 'Inactivo'}
+                          ],
+                          getValue: (e) => e?.isActive ?? true,
                           applyValue:
                               (e, v) => Employee(
                                 id: e?.id ?? 0,
@@ -342,7 +345,10 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                         key: 'isActive',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
-                                        options: [true, false],
+                                        options: [
+                                          {'value': true, 'label': 'Activo'},
+                                          {'value': false, 'label': 'Inactivo'}
+                                        ],
                                         getValue:
                                             (e) => e?.isActive ?? true,
                                         applyValue:
