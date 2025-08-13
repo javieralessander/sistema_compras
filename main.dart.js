@@ -113419,7 +113419,7 @@ p=A.w6(B.Lk,B.aH,B.OK,q,new A.u3(A.Uw(q,q,B.a1,q,q,q,q,q,q,B.i,q,q,B.cK,q,new A.
 s=A.bjm(B.akj)
 r=A.EL(B.a1,B.i,B.JK,B.cK,new A.cq(A.b8(10),B.l))
 s=A.w6(B.Lj,B.aP,B.OJ,q,new A.u3(A.Uw(q,q,B.a1,q,q,q,q,q,q,B.i,q,q,B.cK,q,new A.cq(A.b8(12),B.l),q,q,q,q)),new A.ud(r),B.UW,B.tK,B.a1,B.ef,s,q)
-return new A.yL($.bdQ(),"Sistema de compras",p,s,B.alr,B.a2o,B.Zq,!1,q)}}
+return new A.yL($.bdQ(),"SICOM - Sistema de Compras",p,s,B.alr,B.a2o,B.Zq,!1,q)}}
 A.ap2.prototype={
 ayw(a){var s
 if(a==null||a.length===0)return"Este campo es requerido"
