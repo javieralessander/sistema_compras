@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:sistema_compras/features/home/screens/home_screen.dart';
 import '../../features/modules/article/screens/article_screen.dart';
 import '../../features/modules/brand/screens/brand_screen.dart';
@@ -10,7 +11,7 @@ import '../../features/modules/purchase _order/screens/purchase _order_screen.da
 import '../../features/modules/request_articles/screens/request_articles_screen.dart';
 import '../../features/modules/supplier/screens/supplier_screen.dart';
 import '../../features/modules/unit/screens/unit_screen.dart';
-import '../../features/profile/screens/user_profile_screen.dart';
+import '../../features/auth/providers/auth_provider.dart';
 
 // 1. Define la clase de datos para los menús
 class MenuItemData {
@@ -127,12 +128,55 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: isMobile ? 0 : sizeScreen.width * 0.02,
       centerTitle: isMobile,
       actions: [
-        IconButton(
-          icon: const Icon(Icons.account_circle_outlined),
-          iconSize: isSmall ? 28 : 32,
-          onPressed: () {
-            context.pushNamed(UserProfileScreen.name);
+        PopupMenuButton<String>(
+          offset: const Offset(0, 40),
+          child: Icon(
+            Icons.account_circle_outlined,
+            size: isSmall ? 28 : 32,
+            color: Colors.black,
+          ),
+          onSelected: (String value) async {
+            if (value == 'logout') {
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Cerrar Sesión'),
+                  content: const Text('¿Estás seguro de que quieres cerrar sesión?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancelar'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Cerrar Sesión'),
+                    ),
+                  ],
+                ),
+              );
+              
+              if (confirm == true) {
+                await authProvider.logout();
+                if (context.mounted) {
+                  context.go('/auth');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Sesión cerrada exitosamente')),
+                  );
+                }
+              }
+            }
           },
+          itemBuilder: (BuildContext context) => [
+            const PopupMenuItem<String>(
+              value: 'logout',
+              child: ListTile(
+                leading: Icon(Icons.logout, color: Colors.red),
+                title: Text('Cerrar Sesión', style: TextStyle(color: Colors.red)),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ],
         ),
         if (!isSmall) ...[
           const SizedBox(width: 8),
@@ -141,29 +185,34 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'JAVIER ALESSANDER MONTERO',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    maxLines: 1,
-                  ),
-                  Text(
-                    'JA.MONTERO',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    maxLines: 1,
-                  ),
-                ],
+              child: Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  final user = authProvider.currentUser;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user?.nombre.toUpperCase() ?? 'USUARIO',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        maxLines: 1,
+                      ),
+                      Text(
+                        user?.email.toUpperCase() ?? 'NO DISPONIBLE',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        maxLines: 1,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),

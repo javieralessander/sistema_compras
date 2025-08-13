@@ -4,6 +4,7 @@ import '../../../../core/config/app_theme.dart';
 import '../../../../shared/widgets/generic_appbar.dart';
 import '../../../../shared/widgets/generic_data_table.dart';
 import '../../../../shared/widgets/generic_form_dialog.dart';
+import '../../../../shared/widgets/status_widget.dart';
 import '../models/unit_model.dart';
 import '../providers/unit_provider.dart';
 
@@ -78,7 +79,10 @@ class _UnitScreenState extends State<UnitScreen> {
                           key: 'isActive',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: [true, false],
+                          options: [
+                            {'value': true, 'label': 'Activo'},
+                            {'value': false, 'label': 'Inactivo'},
+                          ],
                           getValue: (u) => u?.isActive ?? true,
                           applyValue:
                               (u, v) => Unit(
@@ -129,34 +133,9 @@ class _UnitScreenState extends State<UnitScreen> {
                     DataCell(Text(u.id.toString())),
                     DataCell(Text(u.descripcion)),
                     DataCell(
-                      Chip(
-                        shape: StadiumBorder(
-                          side: BorderSide(
-                            color:
-                                u.isActive
-                                    ? AppColors.success
-                                    : AppColors.danger,
-                          ),
-                        ),
-                        backgroundColor:
-                            u.isActive
-                                ? AppColors.success.withOpacity(0.15)
-                                : AppColors.danger.withOpacity(0.15),
-                        label: SizedBox(
-                          width: sizeScreen.width * 0.04,
-                          child: Text(
-                            u.isActive ? 'Activo' : 'Inactivo',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color:
-                                  u.isActive
-                                      ? AppColors.success
-                                      : AppColors.danger,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
+                      StatusChip.general(
+                        u.isActive,
+                        width: sizeScreen.width * 0.04,
                       ),
                     ),
                     DataCell(

@@ -3,10 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/config/app_theme.dart';
-import '../../../shared/utils/form_validation.dart';
-import '../services/services.dart';
+import '../../../core/services/validation_service.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/custom_text_form_field.dart';
-import 'auth_gate.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -93,60 +92,104 @@ class _RegisterFormState extends State<_RegisterForm> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final telefonoController = TextEditingController();
+  final departamentoController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    telefonoController.dispose();
+    departamentoController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleRegister() async {
+    if (!formKeyRegister.currentState!.validate()) return;
+
+    final authProvider = context.read<AuthProvider>();
+    
+    final success = await authProvider.register(
+      email: emailController.text.trim(),
+      password: passwordController.text,
+      nombre: nameController.text.trim(),
+      telefono: telefonoController.text.trim().isNotEmpty ? telefonoController.text.trim() : null,
+      departamento: departamentoController.text.trim().isNotEmpty ? departamentoController.text.trim() : null,
+    );
+
+    if (success && mounted) {
+      context.go('/home');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final registerService = context.watch<RegisterService>();
-    final validationForm = FormValidation();
+    final authProvider = context.watch<AuthProvider>();
 
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: formKeyRegister,
       child: Column(
         children: [
+          // Mensaje de error
+          if (authProvider.errorMessage != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      authProvider.errorMessage!,
+                      style: TextStyle(color: Colors.red.shade700, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           CustomTextFormField(
             labelText: 'Nombre',
             keyboardType: TextInputType.name,
             controller: nameController,
-            onChanged: (value) => registerService.user.name = value,
-            validator: validationForm.nameValidator(nameController.text),
+            validator: ValidationService.validateName,
           ),
           const SizedBox(height: 16),
           CustomTextFormField(
             labelText: 'Correo electrónico',
             keyboardType: TextInputType.emailAddress,
             controller: emailController,
-            onChanged: (value) => registerService.user.email = value,
-            validator: FormValidation().emailValidator,
+            validator: ValidationService.validateEmail,
           ),
           const SizedBox(height: 16),
           CustomTextFormField(
-            obscureText: registerService.obscureText,
+            labelText: 'Teléfono (opcional)',
+            keyboardType: TextInputType.phone,
+            controller: telefonoController,
+            validator: ValidationService.validatePhone,
+          ),
+          const SizedBox(height: 16),
+          CustomTextFormField(
+            labelText: 'Departamento (opcional)',
+            keyboardType: TextInputType.text,
+            controller: departamentoController,
+            validator: (value) => ValidationService.validateMaxLength(value, 100, 'Departamento'),
+          ),
+          const SizedBox(height: 16),
+          CustomTextFormField(
+            obscureText: true,
             labelText: 'Contraseña',
             keyboardType: TextInputType.visiblePassword,
             controller: passwordController,
-            onChanged: (value) => registerService.user.password = value,
-            validator: validationForm.passwordValidator(passwordController.text),
-            suffixIcon: IconButton(
-              style: IconButton.styleFrom(
-                foregroundColor: AppColors.info,
-                backgroundColor: Colors.transparent,
-              ),
-              icon: Icon(
-                registerService.obscureText
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-              ),
-              onPressed: registerService.toggleObscureText,
-            ),
+            validator: ValidationService.validatePassword,
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -159,26 +202,9 @@ class _RegisterFormState extends State<_RegisterForm> {
                 ),
                 backgroundColor: AppColors.info,
               ),
-              onPressed: context.select<RegisterService, bool>(
-                        (registerService) => registerService.isLoading,
-                      )
-                      ? null
-                      : () async {
-                          final registerService = context.read<RegisterService>();
-                          final form = formKeyRegister.currentState;
-                          if (form != null && form.validate()) {
-                            final success = await registerService
-                                .createUserWithEmailAndPassword(
-                                  emailController.text,
-                                  passwordController.text,
-                                );
-                            if (success && context.mounted) {
-                              context.pushReplacementNamed(AuthGate.name);
-                            }
-                          }
-                        },
+              onPressed: authProvider.isLoading ? null : _handleRegister,
               child: Text(
-                context.watch<RegisterService>().isLoading
+                authProvider.isLoading
                     ? 'Espere...'
                     : 'Crear cuenta',
                 style: const TextStyle(

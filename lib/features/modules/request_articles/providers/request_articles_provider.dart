@@ -134,12 +134,46 @@ class RequestProvider extends ChangeNotifier {
   }
 
   Future<void> aprobarSolicitud(int id) async {
-    // Lógica para aprobar la solicitud (cambiar estado a 'Aprobado')
-    // Actualiza la lista y notifica listeners
+    try {
+      // Buscar la solicitud por ID
+      final solicitud = _todos.firstWhere((r) => r.id == id);
+      
+      // Aprobar usando el servicio
+      final solicitudAprobada = await RequestService.aprobar(solicitud);
+      
+      // Actualizar en la lista local
+      final index = _todos.indexWhere((r) => r.id == id);
+      if (index != -1) {
+        _todos[index] = solicitudAprobada;
+        _actualizarPagina();
+      }
+      
+      debugPrint('✅ Solicitud $id aprobada exitosamente');
+    } catch (e) {
+      debugPrint('❌ Error al aprobar solicitud $id: $e');
+      rethrow; // Re-lanzar para que la UI pueda manejar el error
+    }
   }
 
   Future<void> anularSolicitud(int id) async {
-    // Lógica para anular la solicitud (cambiar estado a 'Rechazado' o 'Anulado')
-    // Actualiza la lista y notifica listeners
+    try {
+      // Buscar la solicitud por ID
+      final solicitud = _todos.firstWhere((r) => r.id == id);
+      
+      // Rechazar usando el servicio
+      final solicitudRechazada = await RequestService.rechazar(solicitud);
+      
+      // Actualizar en la lista local
+      final index = _todos.indexWhere((r) => r.id == id);
+      if (index != -1) {
+        _todos[index] = solicitudRechazada;
+        _actualizarPagina();
+      }
+      
+      debugPrint('✅ Solicitud $id rechazada exitosamente');
+    } catch (e) {
+      debugPrint('❌ Error al rechazar solicitud $id: $e');
+      rethrow; // Re-lanzar para que la UI pueda manejar el error
+    }
   }
 }

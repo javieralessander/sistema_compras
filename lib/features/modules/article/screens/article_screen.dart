@@ -157,9 +157,12 @@ class _ArticleScreenState extends State<ArticleScreen> {
                         ),
                         FormFieldDefinition<Article>(
                           key: 'isActive',
-                          label: 'isActive',
+                          label: 'Estado',
                           fieldType: 'dropdown',
-                          options: [true, false],
+                          options: [
+                            {'value': true, 'label': 'Activo'},
+                            {'value': false, 'label': 'Inactivo'}
+                          ],
                           getValue: (a) => a?.isActive ?? true,
                           applyValue:
                               (a, v) => Article(
@@ -406,7 +409,10 @@ class _ArticleScreenState extends State<ArticleScreen> {
                                         key: 'isActive',
                                         label: 'Estado',
                                         fieldType: 'dropdown',
-                                        options: [true, false],
+                                        options: [
+                                          {'value': true, 'label': 'Activo'},
+                                          {'value': false, 'label': 'Inactivo'}
+                                        ],
                                         getValue: (a) => a?.isActive,
                                         applyValue:
                                             (a, v) => Article(

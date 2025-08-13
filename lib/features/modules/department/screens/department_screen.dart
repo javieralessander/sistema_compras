@@ -81,7 +81,10 @@ class _DepartmentScreenState extends State<DepartmentScreen> {
                           key: 'estado',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: [true, false],
+                          options: [
+                            {'value': true, 'label': 'Activo'},
+                            {'value': false, 'label': 'Inactivo'},
+                          ],
                           getValue: (d) => d?.isActive ?? true,
                           applyValue:
                               (d, v) => Department(
