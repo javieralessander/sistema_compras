@@ -1,11 +1,11 @@
 {
-    "name": "sistema_compras",
-    "short_name": "sistema_compras",
+    "name": "SICOM - Sistema de Compras",
+    "short_name": "SICOM",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Sistema Integral de Compras y Gestión de Inventarios",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -82,7 +82,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Sistema de compras',
+      title: 'SICOM - Sistema de Compras',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode:
