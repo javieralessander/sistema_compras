@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -9,24 +10,36 @@ import 'package:sistema_compras/features/modules/unit/providers/unit_provider.da
 import 'core/config/app_router.dart';
 import 'core/config/app_theme.dart';
 import 'core/config/env.dart';
+import 'core/config/web_config.dart';
+import 'core/config/http_api_client.dart';
 import 'core/localization/app_localizations_delegate.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/services/preferences.dart';
-import 'features/auth/services/auth_service.dart';
-import 'features/auth/services/login_service.dart';
-import 'features/auth/services/services.dart';
+import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/guards/auth_guard.dart';
 import 'features/modules/brand/providers/brand_provider.dart';
 import 'features/modules/employee/providers/employee_provider.dart';
 import 'features/modules/purchase _order/providers/purchase _order_provider.dart';
 import 'features/modules/request_articles/providers/request_articles_provider.dart';
 import 'features/modules/supplier/providers/supplier_provider.dart';
+import 'features/home/providers/dashboard_provider.dart';
+import 'features/home/services/dashboard_service.dart';
 
 Future<void> main() async {
   // Evitar el error de "WidgetsBinding not initialized"
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Configurar error handling para Flutter web
+  if (kIsWeb) {
+    WebConfig.configureWebDevelopment();
+  }
+
   // Cargar las variables de entorno
-  await dotenv.load(fileName: Environment.fileName);
+  try {
+    await dotenv.load(fileName: Environment.fileName);
+  } catch (e) {
+    debugPrint('Error loading .env file: $e');
+  }
 
   //Inicializar de las preferencias
   await Preferences.init();
@@ -35,9 +48,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthService()),
-        ChangeNotifierProvider(create: (_) => LoginService()),
-        ChangeNotifierProvider(create: (_) => RegisterService()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => EmployeeProvider()),
         ChangeNotifierProvider(create: (_) => DepartmentProvider()),
         ChangeNotifierProvider(create: (_) => BrandProvider()),
@@ -46,8 +57,16 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
         ChangeNotifierProvider(create: (_) => RequestProvider()),
         ChangeNotifierProvider(create: (_) => PurchaseOrderProvider()),
+        // Dashboard Provider con configuración
+        ChangeNotifierProvider(
+          create: (_) {
+            final httpClient = HttpApiClient(Environment.apiUrl);
+            final dashboardService = DashboardService(httpClient);
+            return DashboardProvider(dashboardService);
+          },
+        ),
       ],
-      child: const MyApp(),
+      child: const AuthInitializer(child: MyApp()),
     ),
   );
 }
@@ -57,7 +76,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     // Screen de lo ya hecho
     // Diagrama de clases UML
     // Diagrama de casos de uso

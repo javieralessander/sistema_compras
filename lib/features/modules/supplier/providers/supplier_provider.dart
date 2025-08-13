@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/utils/logger.dart';
 import '../models/supplier_model.dart';
 import '../services/supplier_service.dart';
 
@@ -49,7 +50,7 @@ class SupplierProvider extends ChangeNotifier {
       _todos = data;
       _actualizarPagina();
     } catch (e) {
-      debugPrint('Error al cargar proveedores: $e');
+      Logger.error('Error al cargar proveedores', e, null, 'SupplierProvider');
     }
 
     _isLoading = false;

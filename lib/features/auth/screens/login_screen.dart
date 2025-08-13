@@ -4,11 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/config/app_theme.dart';
-import '../../../shared/utils/form_validation.dart';
-import '../services/login_service.dart';
+import '../../../core/services/validation_service.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/custom_text_form_field.dart';
-import 'auth_gate.dart';
-import 'forgot_password.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -69,9 +67,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap:
-                                  () => context.pushNamed(
-                                    ForgotPasswordScreen.name,
-                                  ),
+                                  () => context.push('/forgot-password'),
                               child: const Text(
                                 "¿Necesitas ayuda?",
                                 style: TextStyle(color: AppColors.info),
@@ -101,6 +97,7 @@ class _LoginFormState extends State<_LoginForm> {
   final formKeyLogin = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _rememberMe = false;
 
   @override
   void dispose() {
@@ -109,47 +106,86 @@ class _LoginFormState extends State<_LoginForm> {
     super.dispose();
   }
 
+  Future<void> _handleLogin() async {
+    if (!formKeyLogin.currentState!.validate()) return;
+
+    final authProvider = context.read<AuthProvider>();
+    
+    final success = await authProvider.login(
+      email: emailController.text.trim(),
+      password: passwordController.text,
+      rememberMe: _rememberMe,
+    );
+
+    if (success && mounted) {
+      context.go('/home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final loginService = context.watch<LoginService>();
-    final validationForm = FormValidation();
+    final authProvider = context.watch<AuthProvider>();
 
     return Form(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       key: formKeyLogin,
       child: Column(
         children: [
+          // Mensaje de error
+          if (authProvider.errorMessage != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      authProvider.errorMessage!,
+                      style: TextStyle(color: Colors.red.shade700, fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           CustomTextFormField(
             labelText: 'Correo electrónico',
             keyboardType: TextInputType.emailAddress,
             controller: emailController,
-            onChanged: (value) => loginService.email = value,
-            validator: FormValidation().emailValidator,
+            validator: ValidationService.validateEmail,
           ),
           const SizedBox(height: 16),
           CustomTextFormField(
-            obscureText: loginService.obscureText,
+            obscureText: true,
             labelText: 'Contraseña',
             keyboardType: TextInputType.visiblePassword,
             controller: passwordController,
-            onChanged: (value) => loginService.password = value,
-            validator: validationForm.passwordValidator(
-              passwordController.text,
-            ),
-            suffixIcon: IconButton(
-              style: IconButton.styleFrom(
-                foregroundColor: AppColors.info,
-                backgroundColor: Colors.transparent,
-              ),
-              icon: Icon(
-                loginService.obscureText
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-              ),
-              onPressed: loginService.toggleObscureText,
-            ),
+            validator: ValidationService.validatePassword,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          // Checkbox recordarme
+          Row(
+            children: [
+              Checkbox(
+                value: _rememberMe,
+                onChanged: (value) {
+                  setState(() {
+                    _rememberMe = value ?? false;
+                  });
+                },
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              const Text('Recordarme', style: TextStyle(fontSize: 14)),
+            ],
+          ),
+          const SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -160,25 +196,9 @@ class _LoginFormState extends State<_LoginForm> {
                 ),
                 backgroundColor: AppColors.info,
               ),
-              onPressed:
-                  context.select<LoginService, bool>(
-                        (loginService) => loginService.isLoading,
-                      )
-                      ? null
-                      : () async {
-                        final loginService = context.read<LoginService>();
-                        final success = await loginService.login(context);
-                        if (success) {
-                          await Future.delayed(
-                            const Duration(milliseconds: 500),
-                          );
-                          if (context.mounted) {
-                            context.pushReplacementNamed(AuthGate.name);
-                          }
-                        }
-                      },
+              onPressed: authProvider.isLoading ? null : _handleLogin,
               child: Text(
-                context.watch<LoginService>().isLoading
+                authProvider.isLoading
                     ? 'Espere...'
                     : 'Iniciar sesión',
                 style: const TextStyle(

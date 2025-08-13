@@ -83,7 +83,10 @@ class _BrandScreenState extends State<BrandScreen> {
                           key: 'estado',
                           label: 'Estado',
                           fieldType: 'dropdown',
-                          options: [true, false],
+                          options: [
+                            {'value': true, 'label': 'Activo'},
+                            {'value': false, 'label': 'Inactivo'},
+                          ],
                           getValue: (b) => b?.isActive ?? true,
                           applyValue:
                               (b, v) => Brand(

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:sistema_compras/core/config/env.dart';
 import '../../../../core/config/http_api_client.dart';
 import '../models/supplier_model.dart';
@@ -15,7 +13,6 @@ class SupplierService {
   }
 
   static Future<Supplier> create(Supplier proveedor) async {
-    print(json.encode(proveedor.toJson()));
     return await _client.post<Supplier>(
       '/proveedores',
       proveedor.toJson(),
